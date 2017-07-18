@@ -1,0 +1,10 @@
+group 'digital.wup'
+version '1.0.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    testCompile 'junit:junit:4.11'
+}

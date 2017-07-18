@@ -1,0 +1,3 @@
+include 'plugin'
+rootProject.name = 'maven-publish'
+findProject(':plugin')?.name = 'android-maven-publish'
