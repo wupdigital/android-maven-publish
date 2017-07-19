@@ -17,21 +17,51 @@
 package digital.wup.android_maven_publish
 
 import org.gradle.api.Project
-import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Assert
-import org.junit.Test
+import org.gradle.api.internal.component.Usage
 
-import static org.junit.Assert.assertNotNull
-import static org.junit.Assert.assertTrue
+class AndroidMavenPublishTest extends BaseTestCase {
 
-class AndroidMavenPublishTest {
-
-    @Test
     public void testMavenPublishPluginRequired() {
-        Project project = ProjectBuilder.builder().build();
-
-        project.plugins.apply(AndroidMavenPublishPlugin)
+        Project project = buildAndroidProject()
 
         assertNotNull("maven-publish plugin hasn't applied", project.plugins.findPlugin('maven-publish'))
+    }
+
+    public void testAndroidComponent() {
+        Project project = buildAndroidProject()
+
+        assertNotNull("Android component not found", project.components.getByName('android'))
+
+        def android = project.components.android
+        assertTrue("Android component is not instance of AndroidLibrary", android instanceof AndroidLibrary)
+        assertEquals("android", android.getName())
+        assertFalse(android.getUsages().isEmpty())
+    }
+
+    public void testCompileUsage() {
+        def component = buildAndroidProject().components.android
+
+        Usage usage = component.getUsages().getAt(0)
+        assertEquals('It is not compile usage', 'compile', usage.getName())
+        assertFalse("Artifacts not found", usage.getArtifacts().isEmpty())
+
+        def artifact = usage.getArtifacts().getAt(0)
+
+        assertTrue(artifact instanceof AarPublishArtifact)
+
+        assertTrue(usage.getDependencies().isEmpty())
+    }
+
+    public void testAarArtifact() {
+        Project project = buildAndroidProject()
+        AndroidLibrary android = project.components.android
+        Usage usage = android.getUsages().getAt(0)
+        AarPublishArtifact artifact = usage.getArtifacts().getAt(0)
+        assertEquals(PROJECT_NAME, artifact.getName())
+        assertNull(artifact.getClassifier())
+        assertNull(artifact.getDate())
+        assertEquals('aar', artifact.getExtension())
+        assertEquals(new File(getProjectAarOutputsDir(), "${PROJECT_NAME}-release.aar").path, artifact.getFile().path)
+        assertEquals('aar', artifact.getType())
     }
 }
