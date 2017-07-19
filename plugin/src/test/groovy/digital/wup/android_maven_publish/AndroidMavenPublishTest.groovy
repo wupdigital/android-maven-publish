@@ -16,14 +16,22 @@
 
 package digital.wup.android_maven_publish
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.testfixtures.ProjectBuilder
+import org.junit.Assert
+import org.junit.Test
 
-class AndroidMavenPublishPlugin implements Plugin<Project> {
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertTrue
 
-    @Override
-    void apply(Project project) {
-        project.plugins.apply(MavenPublishPlugin)
+class AndroidMavenPublishTest {
+
+    @Test
+    public void testMavenPublishPluginRequired() {
+        Project project = ProjectBuilder.builder().build();
+
+        project.plugins.apply(AndroidMavenPublishPlugin)
+
+        assertNotNull("maven-publish plugin hasn't applied", project.plugins.findPlugin('maven-publish'))
     }
 }
