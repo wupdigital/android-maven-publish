@@ -1,6 +1,14 @@
-language: groovy
+language: android
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-25.0.3
+    - android-25
 jdk:
   - oraclejdk8
+script:
+  - ./gradlew clean check
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
