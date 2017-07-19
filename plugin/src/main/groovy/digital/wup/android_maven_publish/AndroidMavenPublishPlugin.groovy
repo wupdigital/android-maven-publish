@@ -18,6 +18,7 @@ package digital.wup.android_maven_publish
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 
 class AndroidMavenPublishPlugin implements Plugin<Project> {
@@ -25,5 +26,13 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.plugins.apply(MavenPublishPlugin)
+
+        Task assemble = project.tasks.findByName('assemble')
+
+        File aarFile = new File("${project.buildDir}${File.separator}outputs${File.separator}${project.name}-release.aar")
+
+        AarPublishArtifact artifact = new AarPublishArtifact(aarFile, project.name)
+        artifact.builtBy(assemble)
+        project.components.add(new AndroidLibrary(project.configurations, artifact))
     }
 }
