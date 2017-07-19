@@ -7,6 +7,17 @@ plugins {
 group 'digital.wup'
 version '1.0.0-SNAPSHOT'
 
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+        showExceptions true
+        exceptionFormat "full"
+        showCauses true
+        showStackTraces true
+    }
+}
+
 jacoco {
     toolVersion = "0.7.9"
 }
