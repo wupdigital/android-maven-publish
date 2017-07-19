@@ -1,7 +1,23 @@
+plugins {
+    id 'groovy'
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+}
+
 group 'digital.wup'
 version '1.0.0-SNAPSHOT'
 
-apply plugin: 'groovy'
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
+}
+
+tasks.coveralls {
+    dependsOn 'jacocoTestReport'
+}
+
+tasks.check.finalizedBy tasks.coveralls
 
 dependencies {
     compile gradleApi()
