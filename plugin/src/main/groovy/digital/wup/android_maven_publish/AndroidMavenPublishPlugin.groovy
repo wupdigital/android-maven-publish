@@ -27,6 +27,16 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.plugins.apply(MavenPublishPlugin)
 
+        if (isAndroidLibraryPluginApplied(project)) {
+            addAndroidComponent(project)
+        }
+    }
+
+    private static boolean isAndroidLibraryPluginApplied(Project project) {
+        return project.plugins.hasPlugin('com.android.library')
+    }
+
+    private static void addAndroidComponent(Project project) {
         Task assemble = project.tasks.findByName('assemble')
 
         File aarFile = new File("${project.buildDir}${File.separator}outputs${File.separator}${project.name}-release.aar")

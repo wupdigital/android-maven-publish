@@ -22,7 +22,7 @@ import org.gradle.testfixtures.ProjectBuilder
 
 import java.security.CodeSource
 
-abstract class BaseTestCase extends TestCase {
+abstract class BaseTestCase extends GroovyTestCase {
 
     protected static final String PROJECT_NAME = 'android-test'
 
@@ -39,6 +39,16 @@ abstract class BaseTestCase extends TestCase {
             compileSdkVersion 25
             buildToolsVersion "25.0.3"
         }
+        p.evaluate()
+        return p
+    }
+
+    protected final Project buildJavaProject() {
+        Project p = ProjectBuilder.builder()
+                    .build()
+        p.apply plugin: 'java'
+        p.apply plugin: AndroidMavenPublishPlugin
+
         p.evaluate()
         return p
     }

@@ -17,27 +17,36 @@
 package digital.wup.android_maven_publish
 
 import org.gradle.api.Project
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.internal.component.Usage
+import org.gradle.internal.impldep.org.junit.rules.ExpectedException
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4.class)
 class AndroidMavenPublishTest extends BaseTestCase {
 
+    @Test
     public void testMavenPublishPluginRequired() {
         Project project = buildAndroidProject()
 
-        assertNotNull("maven-publish plugin hasn't applied", project.plugins.findPlugin('maven-publish'))
+        assertNotNull('maven-publish plugin hasn\'t applied', project.plugins.findPlugin('maven-publish'))
     }
 
+    @Test
     public void testAndroidComponent() {
         Project project = buildAndroidProject()
 
-        assertNotNull("Android component not found", project.components.getByName('android'))
-
+        assertNotNull('Android component not found', project.components.getByName('android'))
         def android = project.components.android
-        assertTrue("Android component is not instance of AndroidLibrary", android instanceof AndroidLibrary)
-        assertEquals("android", android.getName())
-        assertFalse(android.getUsages().isEmpty())
+        assertTrue('Android component is not instance of AndroidLibrary', android instanceof AndroidLibrary)
+        assertEquals('Android library\'s name is not android', 'android', android.getName())
+        assertFalse('Usages is empty', android.getUsages().isEmpty())
     }
 
+    @Test
     public void testCompileUsage() {
         def component = buildAndroidProject().components.android
 
@@ -52,16 +61,23 @@ class AndroidMavenPublishTest extends BaseTestCase {
         assertTrue(usage.getDependencies().isEmpty())
     }
 
+    @Test
     public void testAarArtifact() {
         Project project = buildAndroidProject()
         AndroidLibrary android = project.components.android
         Usage usage = android.getUsages().getAt(0)
         AarPublishArtifact artifact = usage.getArtifacts().getAt(0)
         assertEquals(PROJECT_NAME, artifact.getName())
-        assertNull(artifact.getClassifier())
-        assertNull(artifact.getDate())
-        assertEquals('aar', artifact.getExtension())
-        assertEquals(new File(getProjectAarOutputsDir(), "${PROJECT_NAME}-release.aar").path, artifact.getFile().path)
-        assertEquals('aar', artifact.getType())
+        assertNull('Artifact classifier is not null', artifact.getClassifier())
+        assertNull('Artifact date is not null', artifact.getDate())
+        assertEquals('Artifact extension is not aar', 'aar', artifact.getExtension())
+        assertEquals('Artifact aar path is not correct', new File(getProjectAarOutputsDir(), "${PROJECT_NAME}-release.aar").path, artifact.getFile().path)
+        assertEquals('Artifact type is not aar', 'aar', artifact.getType())
+    }
+
+    @Test(expected = UnknownDomainObjectException)
+    public void testAndroidLibraryPluginNotApplied() throws UnknownDomainObjectException {
+        Project project = buildJavaProject()
+        project.components.getByName('android')
     }
 }
