@@ -16,16 +16,17 @@
 
 package digital.wup.android_maven_publish
 
+import org.gradle.api.Project
 import org.gradle.api.internal.artifacts.publish.AbstractPublishArtifact
 
 final class AarPublishArtifact extends AbstractPublishArtifact {
-    private final aarFile
+    private final File aarFile
     private final String artifactId
 
-    AarPublishArtifact(final File aarFile, final String artifactId) {
+    AarPublishArtifact(Project project) {
         super(new Object[0])
-        this.aarFile = aarFile
-        this.artifactId = artifactId
+        this.aarFile = new File("${project.buildDir}${File.separator}outputs${File.separator}aar${File.separator}${project.name}-release.aar")
+        this.artifactId = project.name
     }
 
     @Override

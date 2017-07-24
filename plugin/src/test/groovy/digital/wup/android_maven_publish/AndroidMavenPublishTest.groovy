@@ -19,8 +19,6 @@ package digital.wup.android_maven_publish
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.internal.component.Usage
-import org.gradle.internal.impldep.org.junit.rules.ExpectedException
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -71,7 +69,8 @@ class AndroidMavenPublishTest extends BaseTestCase {
         assertNull('Artifact classifier is not null', artifact.getClassifier())
         assertNull('Artifact date is not null', artifact.getDate())
         assertEquals('Artifact extension is not aar', 'aar', artifact.getExtension())
-        assertEquals('Artifact aar path is not correct', new File(getProjectAarOutputsDir(), "${PROJECT_NAME}-release.aar").path, artifact.getFile().path)
+        assertEquals('Artifact aar path is not correct',
+                new File(getProjectAarOutputsDir(), "${PROJECT_NAME}-release.aar").path, artifact.getFile().path)
         assertEquals('Artifact type is not aar', 'aar', artifact.getType())
     }
 

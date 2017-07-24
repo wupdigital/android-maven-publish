@@ -39,9 +39,7 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
     private static void addAndroidComponent(Project project) {
         Task assemble = project.tasks.findByName('assemble')
 
-        File aarFile = new File("${project.buildDir}${File.separator}outputs${File.separator}${project.name}-release.aar")
-
-        AarPublishArtifact artifact = new AarPublishArtifact(aarFile, project.name)
+        AarPublishArtifact artifact = new AarPublishArtifact(project)
         artifact.builtBy(assemble)
         project.components.add(new AndroidLibrary(project.configurations, artifact))
     }
