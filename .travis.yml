@@ -8,7 +8,7 @@ android:
 jdk:
   - oraclejdk8
 script:
-  - ./gradlew clean check
+  - ./gradlew clean check jacocoTestReport coveralls
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:

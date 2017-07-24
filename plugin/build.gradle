@@ -9,17 +9,17 @@ version '1.0.0-SNAPSHOT'
 
 test {
     testLogging {
-        events "passed", "skipped", "failed"
+        events 'passed', 'skipped', 'failed'
         showStandardStreams = true
         showExceptions true
-        exceptionFormat "full"
+        exceptionFormat 'full'
         showCauses true
         showStackTraces true
     }
 }
 
 jacoco {
-    toolVersion = "0.7.9"
+    toolVersion = '0.7.9'
 }
 
 jacocoTestReport {
@@ -27,12 +27,6 @@ jacocoTestReport {
         xml.enabled = true
     }
 }
-
-tasks.coveralls {
-    dependsOn 'jacocoTestReport'
-}
-
-tasks.check.finalizedBy tasks.coveralls
 
 dependencies {
     compile gradleApi()
