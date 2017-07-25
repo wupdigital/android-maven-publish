@@ -28,7 +28,6 @@ class BugFixedMavenPomFileGenerator extends MavenPomFileGenerator {
 
     @Override
     public void addRuntimeDependency(MavenDependencyInternal dependency) {
-        MetaMethod metaMethod = super.metaClass.getMetaMethod("addDependency", MavenDependencyInternal, String)
-        metaMethod?.invoke(super, dependency, 'compile')
+        super.addDependency(dependency, 'compile')
     }
 }

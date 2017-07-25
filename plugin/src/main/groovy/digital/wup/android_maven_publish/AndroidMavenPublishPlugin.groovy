@@ -32,13 +32,19 @@ import org.gradle.model.RuleSource
 class AndroidMavenPublishPlugin implements Plugin<Project> {
 
     @Override
-    void apply(Project project) {
+    void apply(final Project project) {
         project.plugins.apply(MavenPublishPlugin)
 
         project.extensions.configure(PublishingExtension.class, new Action<PublishingExtension>() {
             @Override
             void execute(PublishingExtension publishingExtension) {
-                PublishingExtension.properties.put('useCompileDependencies', false)
+                publishingExtension.metaClass.useCompileDependencies << {
+
+                    if (project.properties.containsKey('useCompileDependencies')) {
+                        return Boolean.parseBoolean(String.valueOf(project.properties['useCompileDependencies']))
+                    }
+                    return false
+                }
             }
         })
 
@@ -64,7 +70,8 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
 
         @Mutate
         public void realizePublishingTasks(TaskContainer tasks, PublishingExtension extension) {
-            if (!extension.properties.containsKey('useCompileDependencies') || extension.properties.get('useCompileDependencies') != true) {
+
+            if (!extension.useCompileDependencies()) {
                 return
             }
 
