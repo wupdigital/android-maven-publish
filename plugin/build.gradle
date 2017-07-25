@@ -2,6 +2,8 @@ plugins {
     id 'groovy'
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.7.3'
 }
 
 group 'digital.wup'
@@ -34,4 +36,125 @@ dependencies {
     testCompile gradleTestKit()
     testCompile 'com.android.tools.build:gradle:2.3.3'
     testCompile 'junit:junit:4.12'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+def isRelease() {
+    !project.version.endsWith('-SNAPSHOT')
+}
+
+def scmTag() {
+    isRelease() ? 'master' : project.version
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            name 'Balázs Varga'
+            email 'balazs.varga@wup.hu'
+            organization 'WUP Ltd.'
+            organizationUrl 'http://wup.digital'
+        }
+    }
+    scm {
+        connection "scm:git:git://${SCM_URL}.git"
+        developerConnection "scm:git:ssh://${SCM_URL}.git"
+        url "https://${SCM_URL}/tree/${scmTag()}"
+        tag scmTag()
+    }
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', DESCRIPTION)
+                root.appendNode('name', "${project.group}:${project.name}")
+                root.appendNode('url', "https://${SCM_URL}")
+                root.children().last() + pomConfig
+            }
+        }
+    }
+    if (!isRelease()) {
+        repositories {
+            maven {
+                url = 'https://oss.sonatype.org/content/repositories/snapshots'
+                credentials {
+                    username = System.getenv('OSS_USER')
+                    password = System.getenv('OSS_PASSWORD')
+                }
+            }
+        }
+    }
+}
+
+if (isRelease()) {
+    bintray {
+        user = System.getenv('BINTRAY_USER')
+        key = System.getenv('BINTRAY_KEY')
+
+        publications = ['maven']
+
+        dryRun = false
+
+        pkg {
+            repo = 'wup-digital-maven'
+            name = project.name
+            userOrg = 'wupdigital'
+            description = DESCRIPTION
+            websiteUrl = "https://${SCM_URL}"
+            issueTrackerUrl = "https://${SCM_URL}/issues"
+            vcsUrl = 'https://${SCM_URL}.git'
+            licenses = ['Apache-2.0']
+            labels = ['android', 'gradle-plugin', 'publishing', 'maven-publish']
+
+            githubRepo = 'wupdigital/android-maven-publish'
+            githubReleaseNotesFile = 'CHANGELOG.md'
+
+            publish = true
+
+            version {
+                name = project.version
+                vcsTag = scmTag()
+
+                gpg {
+                    sign = isRelease()
+                }
+
+                mavenCentralSync {
+                    user = System.getenv('OSS_USER')
+                    password = System.getenv('OSS_PASSWORD')
+                }
+            }
+        }
+    }
+
+    publish.dependsOn(['check', bintrayUpload])
+    bintrayUpload.dependsOn(['generatePomFileForPluginMavenPublication',
+                             sourcesJar,
+                             javadocJar])
 }

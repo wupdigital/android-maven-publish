@@ -8,22 +8,23 @@ Modification to the standard Maven Publish plugin to be compatible with android-
 
 ## Documentation
 
-Please refer to the standard Maven Publish plugin documentation: https://docs.gradle.org/current/userguide/publishing_maven.html
-
-The android-maven-publish plugin provides an `SowftwareComponent` like `java` plugin (`components.java`).
+The android-maven-publish plugin provides a `SowftwareComponent` like `java` plugin (`components.java`).
 The android component is used to determine which aar files to publish, and which dependencies should be listed in the generated POM file.
 
 ### Usage
 
+Please refer to the standard Maven Publish plugin documentation: https://docs.gradle.org/current/userguide/publishing_maven.html
+
 ```groovy
-publishing {
-    publications {
-        mavenAar(MavenPublication) {
-            from components.android
+    publishing {
+        publications {
+            mavenAar(MavenPublication) {
+                from components.android
+            }
         }
     }
-}
 ```
+
 
 ## Compatibility information
 
