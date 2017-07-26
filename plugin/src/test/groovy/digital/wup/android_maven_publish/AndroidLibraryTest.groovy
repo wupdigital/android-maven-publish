@@ -23,9 +23,10 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
 
     }
 
-    def 'usages is not empty'() {
+    def 'compile usage available'() {
         expect:
         !component.usages.isEmpty()
+        component.usages[0].name == 'compile'
     }
 
     def 'get dependencies from default configuration'() {
@@ -35,7 +36,7 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.android {
             compileSdkVersion 25
-            buildToolsVersion "25.0.3"
+            buildToolsVersion '25.0.3'
         }
         project.dependencies {
             compile 'com.google.code.gson:gson:2.8.1'
@@ -45,14 +46,32 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
         !component.usages[0].dependencies.isEmpty()
         ((ModuleDependency) component.usages[0].dependencies[0]).getGroup() == 'com.google.code.gson'
         ((ModuleDependency) component.usages[0].dependencies[0]).getName() == 'gson'
+    }
 
+    def 'dependencies for build type'() {
+        when:
+        project.repositories {
+            jcenter()
+        }
+        project.android {
+            defaultPublishConfig 'debug'
+            compileSdkVersion 25
+            buildToolsVersion '25.0.3'
+        }
+        project.dependencies {
+            releaseCompile 'com.google.code.gson:gson:2.8.1'
+        }
+        project.evaluate()
+
+        then:
+        component.usages[0].dependencies.isEmpty()
     }
 
     def 'get default artifacts'() {
         when:
         project.android {
             compileSdkVersion 25
-            buildToolsVersion "25.0.3"
+            buildToolsVersion '25.0.3'
         }
         project.evaluate()
         then:
@@ -65,7 +84,7 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
         project.android {
             publishNonDefault true
             compileSdkVersion 25
-            buildToolsVersion "25.0.3"
+            buildToolsVersion '25.0.3'
         }
         project.evaluate()
         then:
