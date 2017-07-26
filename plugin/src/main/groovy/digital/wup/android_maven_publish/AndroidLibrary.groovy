@@ -28,8 +28,8 @@ final class AndroidLibrary implements SoftwareComponentInternal {
 
     private final Usage compileUsage;
 
-    AndroidLibrary(ConfigurationContainer configurations, PublishArtifact... artifacts) {
-        compileUsage = new CompileUsage(configurations, artifacts)
+    AndroidLibrary(ConfigurationContainer configurations) {
+        compileUsage = new CompileUsage(configurations)
     }
 
     @Override
@@ -45,24 +45,27 @@ final class AndroidLibrary implements SoftwareComponentInternal {
     private final class CompileUsage implements Usage {
 
         private final ConfigurationContainer configurations
-        private final Set<PublishArtifact> artifacts
         private DependencySet dependencies
 
-        CompileUsage(ConfigurationContainer configurations, PublishArtifact... artifacts) {
+        CompileUsage(ConfigurationContainer configurations) {
             this.configurations = configurations
-            this.artifacts = new LinkedHashSet<>()
-            Collections.addAll(this.artifacts, artifacts)
         }
 
         @Override
         Set<PublishArtifact> getArtifacts() {
-            return artifacts
+            Set<PublishArtifact> artifacts = configurations.getByName('archives').allArtifacts.toSet()
+            return artifacts.unique(false, new Comparator<PublishArtifact>() {
+                @Override
+                int compare(PublishArtifact a1, PublishArtifact a2) {
+                    "${a1.file.path}${a1.type}${a1.classifier}" <=> "${a2.file.path}${a2.type}${a2.classifier}"
+                }
+            })
         }
 
         @Override
         Set<ModuleDependency> getDependencies() {
             if (dependencies == null) {
-                dependencies = configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).getAllDependencies()
+                dependencies = configurations.getByName("default").getAllDependencies()
             }
             return dependencies.withType(ModuleDependency)
         }

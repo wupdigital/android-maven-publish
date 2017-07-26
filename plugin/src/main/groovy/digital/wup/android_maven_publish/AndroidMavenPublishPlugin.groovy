@@ -31,6 +31,8 @@ import org.gradle.model.RuleSource
 
 class AndroidMavenPublishPlugin implements Plugin<Project> {
 
+    private static final KEY_USE_COMPILE_DEPENDENCIES = 'useCompileDependencies'
+
     @Override
     void apply(final Project project) {
         project.plugins.apply(MavenPublishPlugin)
@@ -38,13 +40,7 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
         project.extensions.configure(PublishingExtension.class, new Action<PublishingExtension>() {
             @Override
             void execute(PublishingExtension publishingExtension) {
-                publishingExtension.metaClass.useCompileDependencies << {
-
-                    if (project.properties.containsKey('useCompileDependencies')) {
-                        return Boolean.parseBoolean(String.valueOf(project.properties['useCompileDependencies']))
-                    }
-                    return false
-                }
+                configurePublishingExtension(project, publishingExtension)
             }
         })
 
@@ -53,25 +49,35 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
         }
     }
 
+    private static void configurePublishingExtension(Project project, PublishingExtension publishingExtension) {
+        publishingExtension.metaClass.needCompileDependencies << {
+
+            if (project.properties.containsKey(KEY_USE_COMPILE_DEPENDENCIES)) {
+                return Boolean.parseBoolean(String.valueOf(project.properties[KEY_USE_COMPILE_DEPENDENCIES]))
+            }
+            return false
+        }
+
+        publishingExtension.metaClass.useCompileDependencies << { useCompileDeps ->
+            project.ext.useCompileDependencies = String.valueOf(useCompileDeps)
+        }
+    }
+
     private static boolean isAndroidLibraryPluginApplied(Project project) {
         return project.plugins.hasPlugin('com.android.library')
     }
 
     private static void addAndroidComponent(Project project) {
-        Task assemble = project.tasks.findByName('assemble')
-
-        AarPublishArtifact artifact = new AarPublishArtifact(project)
-        artifact.builtBy(assemble)
-        project.components.add(new AndroidLibrary(project.configurations, artifact))
+        project.components.add(new AndroidLibrary(project.configurations))
     }
 
-    @SuppressWarnings("GroovyUnusedDeclaration")
+    @SuppressWarnings('GroovyUnusedDeclaration')
     static class Rule extends RuleSource {
 
         @Mutate
         public void realizePublishingTasks(TaskContainer tasks, PublishingExtension extension) {
 
-            if (!extension.useCompileDependencies()) {
+            if (!extension.needCompileDependencies()) {
                 return
             }
 
