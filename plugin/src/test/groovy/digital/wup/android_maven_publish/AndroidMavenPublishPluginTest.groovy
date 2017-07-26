@@ -43,6 +43,11 @@ class AndroidMavenPublishPluginTest extends AbstractProjectBuilderSpec {
         publishing.needCompileDependencies() == true
     }
 
+    def 'use runtime dependencies'() {
+        expect:
+        publishing.needCompileDependencies() == false
+    }
+
     def 'android library component has added'() {
         expect:
         project.components.android != null
