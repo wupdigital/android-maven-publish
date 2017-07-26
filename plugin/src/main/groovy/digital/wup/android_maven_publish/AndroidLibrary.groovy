@@ -22,7 +22,6 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.Usage
-import org.gradle.api.plugins.JavaPlugin
 
 final class AndroidLibrary implements SoftwareComponentInternal {
 

@@ -80,16 +80,16 @@ class AndroidMavenPublishPluginTest extends AbstractProjectBuilderSpec {
         project.tasks['generatePomFileForTestPublication'] instanceof GenerateMavenPom
     }
 
-    def "pom dir moves with build dir"() {
+    def 'pom dir moves with build dir'() {
         when:
         project.ext.useCompileDependencies = true
-        publishing.publications.create("test", MavenPublication)
-        def newBuildDir = project.file("changed")
+        publishing.publications.create('test', MavenPublication)
+        def newBuildDir = project.file('changed')
         project.buildDir = newBuildDir
         closeTaskContainer()
 
         then:
-        project.tasks["generatePomFileForTestPublication"].destination == new File(newBuildDir, "publications/test/pom-default.xml")
+        project.tasks['generatePomFileForTestPublication'].destination == new File(newBuildDir, 'publications/test/pom-default.xml')
     }
 
     void closeTaskContainer() {

@@ -25,37 +25,37 @@ import spock.lang.Specification
 
 class BugFixedMavenPomFileGeneratorTest extends Specification {
 
-    def root = new File("build/tmp/test")
-    def projectIdentity = new DefaultMavenProjectIdentity("group-id", "artifact-id", "1.0")
+    def root = new File('build/tmp/test')
+    def projectIdentity = new DefaultMavenProjectIdentity('group-id', 'artifact-id', '1.0')
     def rangeMapper = Stub(VersionRangeMapper)
     def generator = new BugFixedMavenPomFileGenerator(projectIdentity, rangeMapper)
 
-    def "writes regular dependency"() {
+    def 'writes regular dependency'() {
         def dependency = Mock(MavenDependencyInternal)
         when:
         generator.addRuntimeDependency(dependency)
 
         then:
         dependency.artifacts >> new HashSet<DependencyArtifact>()
-        dependency.groupId >> "dep-group"
-        dependency.artifactId >> "dep-name"
-        dependency.version >> "dep-version"
+        dependency.groupId >> 'dep-group'
+        dependency.artifactId >> 'dep-name'
+        dependency.version >> 'dep-version'
         dependency.excludeRules >> []
-        rangeMapper.map("dep-version") >> "maven-dep-version"
+        rangeMapper.map('dep-version') >> 'maven-dep-version'
 
         and:
         with(pom) {
             dependencies.dependency.size() == 1
             with(dependencies[0].dependency[0]) {
-                groupId == "dep-group"
-                artifactId == "dep-name"
-                version == "maven-dep-version"
-                scope == "compile"
+                groupId == 'dep-group'
+                artifactId == 'dep-name'
+                version == 'maven-dep-version'
+                scope == 'compile'
             }
         }
     }
 
-    def "writes dependency with artifacts"() {
+    def 'writes dependency with artifacts'() {
         def dependency = Mock(MavenDependencyInternal)
         def artifact1 = Mock(DependencyArtifact)
         def artifact2 = Mock(DependencyArtifact)
@@ -65,14 +65,14 @@ class BugFixedMavenPomFileGeneratorTest extends Specification {
 
         then:
         dependency.artifacts >> CollectionUtils.toSet([artifact1, artifact2])
-        dependency.groupId >> "dep-group"
-        dependency.version >> "dep-version"
+        dependency.groupId >> 'dep-group'
+        dependency.version >> 'dep-version'
         dependency.excludeRules >> []
-        rangeMapper.map("dep-version") >> "maven-dep-version"
-        artifact1.name >> "artifact-1"
-        artifact1.type >> "type-1"
-        artifact1.classifier >> "classifier-1"
-        artifact2.name >> "artifact-2"
+        rangeMapper.map('dep-version') >> 'maven-dep-version'
+        artifact1.name >> 'artifact-1'
+        artifact1.type >> 'type-1'
+        artifact1.classifier >> 'classifier-1'
+        artifact2.name >> 'artifact-2'
         artifact2.type >> null
         artifact2.classifier >> null
 
@@ -80,20 +80,20 @@ class BugFixedMavenPomFileGeneratorTest extends Specification {
         with(pom) {
             dependencies.dependency.size() == 2
             with(dependencies[0].dependency[0]) {
-                groupId == "dep-group"
-                artifactId == "artifact-1"
-                version == "maven-dep-version"
-                type == "type-1"
-                classifier == "classifier-1"
-                scope == "compile"
+                groupId == 'dep-group'
+                artifactId == 'artifact-1'
+                version == 'maven-dep-version'
+                type == 'type-1'
+                classifier == 'classifier-1'
+                scope == 'compile'
             }
             with(dependencies[0].dependency[1]) {
-                groupId == "dep-group"
-                artifactId == "artifact-2"
-                version == "maven-dep-version"
+                groupId == 'dep-group'
+                artifactId == 'artifact-2'
+                version == 'maven-dep-version'
                 type.empty
                 classifier.empty
-                scope == "compile"
+                scope == 'compile'
             }
         }
     }
@@ -103,7 +103,7 @@ class BugFixedMavenPomFileGeneratorTest extends Specification {
     }
 
     private File getPomFile() {
-        def pomFile = new File(root, "pom.xml")
+        def pomFile = new File(root, 'pom.xml')
         generator.writeTo(pomFile)
         return pomFile
     }
