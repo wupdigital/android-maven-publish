@@ -52,7 +52,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
     classifier = 'groovydoc'
-    from groovydoc.destinationDir
+    from groovydoc.getDestinationDir()
 }
 
 def isRelease() {
@@ -196,19 +196,20 @@ publishPlugins.enabled = isRelease()
 
 def javaDocFolder = isRelease() ? project.version : 'snapshot'
 
-githubPages() {
-    repoUri = "git@${SCM_URL}.git"
-    targetBranch = 'gh-pages'
 
-    pages {
-        from Groovydoc.destinationDir
-        into "javadoc${File.separator}${javaDocFolder}"
+    githubPages() {
+        repoUri = "https://${SCM_URL}.git"
+        targetBranch = 'gh-pages'
+
+        pages {
+            from groovydoc.getDestinationDir()
+            into "javadoc${File.separator}${javaDocFolder}"
+        }
+
+        credentials {
+            username = System.getenv('GH_TOKEN')
+            password = ''
+        }
+
+        commitMessage = "Publish javadoc for ${project.version} version"
     }
-
-    credentials {
-        username = System.getenv('GH_TOKEN')
-        password = ''
-    }
-
-    commitMessage = "Publish javadoc for ${project.version} version"
-}
