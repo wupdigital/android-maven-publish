@@ -128,6 +128,7 @@ if (isRelease()) {
         publications = ['maven']
 
         dryRun = false
+        publish = true
 
         pkg {
             repo = 'wup-digital-maven'
@@ -148,12 +149,15 @@ if (isRelease()) {
             version {
                 name = project.version
                 vcsTag = scmTag()
+                released = new Date()
 
                 gpg {
-                    sign = isRelease()
+                    sign = true
+                    passphrase = System.getenv('GPG_PASSPHARSE')
                 }
 
                 mavenCentralSync {
+                    sync = true
                     user = System.getenv('OSS_USER')
                     password = System.getenv('OSS_PASSWORD')
                 }
@@ -188,17 +192,3 @@ pluginBundle {
 }
 
 publishPlugins.enabled = isRelease()
-
-def javaDocFolder = isRelease() ? project.version : 'snapshot'
-
-githubPages() {
-    repoUri = "git@${SCM_URL}.git"
-    targetBranch = 'gh-pages'
-
-    pages {
-        from groovydoc.destinationDir
-        into "javadoc${File.separator}${javaDocFolder}"
-    }
-
-    commitMessage = "Publish javadoc for ${project.version} version"
-}
