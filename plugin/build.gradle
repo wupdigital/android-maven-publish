@@ -11,6 +11,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.3'
     id 'com.gradle.plugin-publish' version '0.9.7'
+    id 'org.ajoberstar.github-pages' version '1.7.2'
 }
 
 group 'digital.wup'
@@ -49,9 +50,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+    classifier = 'groovydoc'
+    from groovydoc.destinationDir
 }
 
 def isRelease() {
@@ -87,7 +88,7 @@ def pomConfig = {
 }
 
 artifacts {
-    archives sourcesJar, javadocJar
+    archives sourcesJar, groovydocJar
 }
 
 publishing {
@@ -95,7 +96,7 @@ publishing {
         maven(MavenPublication) {
             from components.java
             artifact sourcesJar
-            artifact javadocJar
+            artifact groovydocJar
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', DESCRIPTION)
@@ -168,7 +169,7 @@ if (isRelease()) {
     publish.dependsOn([bintrayUpload])
     bintrayUpload.dependsOn(['generatePomFileForPluginMavenPublication',
                              sourcesJar,
-                             javadocJar])
+                             groovydocJar])
 }
 
 pluginBundle {
@@ -192,3 +193,22 @@ pluginBundle {
 }
 
 publishPlugins.enabled = isRelease()
+
+def javaDocFolder = isRelease() ? project.version : 'snapshot'
+
+githubPages() {
+    repoUri = "git@${SCM_URL}.git"
+    targetBranch = 'gh-pages'
+
+    pages {
+        from Groovydoc.destinationDir
+        into "javadoc${File.separator}${javaDocFolder}"
+    }
+
+    credentials {
+        username = System.getenv('GH_TOKEN')
+        password = ''
+    }
+
+    commitMessage = "Publish javadoc for ${project.version} version"
+}
