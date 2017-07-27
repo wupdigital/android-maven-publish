@@ -10,6 +10,7 @@ plugins {
     id 'com.github.kt3k.coveralls' version '2.6.3'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.3'
+    id 'com.gradle.plugin-publish' version '0.9.7'
 }
 
 group 'digital.wup'
@@ -98,7 +99,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', DESCRIPTION)
-                root.appendNode('name', "${project.group}:${project.name}")
+                root.appendNode('name', project.name)
                 root.appendNode('url', "https://${SCM_URL}")
                 root.children().last() + pomConfig
             }
@@ -117,6 +118,8 @@ publishing {
     }
 }
 
+def projectTags = ['android', 'gradle-plugin', 'publishing', 'maven-publish', 'aar', 'android-library']
+
 if (isRelease()) {
     bintray {
         user = System.getenv('BINTRAY_USER')
@@ -133,14 +136,14 @@ if (isRelease()) {
             description = DESCRIPTION
             websiteUrl = "https://${SCM_URL}"
             issueTrackerUrl = "https://${SCM_URL}/issues"
-            vcsUrl = 'https://${SCM_URL}.git'
+            vcsUrl = "https://${SCM_URL}"
             licenses = ['Apache-2.0']
-            labels = ['android', 'gradle-plugin', 'publishing', 'maven-publish']
+            labels = projectTags
 
             githubRepo = 'wupdigital/android-maven-publish'
             githubReleaseNotesFile = 'CHANGELOG.md'
 
-            publish = true
+            publish = false
 
             version {
                 name = project.version
@@ -162,4 +165,40 @@ if (isRelease()) {
     bintrayUpload.dependsOn(['generatePomFileForPluginMavenPublication',
                              sourcesJar,
                              javadocJar])
+}
+
+pluginBundle {
+    website = "https://${SCM_URL}"
+    vcsUrl = "https://${SCM_URL}"
+    description = DESCRIPTION
+    tags = projectTags
+
+    plugins {
+        publishPlugin {
+            id = "${project.group}.${project.name}"
+            displayName = NAME
+        }
+    }
+
+    mavenCoordinates {
+        groupId = project.group
+        artifactId = project.name
+        version = project.version
+    }
+}
+
+publishPlugins.enabled = isRelease()
+
+def javaDocFolder = isRelease() ? project.version : 'snapshot'
+
+githubPages() {
+    repoUri = "git@${SCM_URL}.git"
+    targetBranch = 'gh-pages'
+
+    pages {
+        from groovydoc.destinationDir
+        into "javadoc${File.separator}${javaDocFolder}"
+    }
+
+    commitMessage = "Publish javadoc for ${project.version} version"
 }
