@@ -6,7 +6,7 @@
 
 Modification of the standard Maven Publish plugin to be compatible with android-library projects (aar).
 
-# Applying the plugin
+## Applying the plugin
 
 ```
 plugins {
