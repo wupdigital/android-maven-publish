@@ -194,22 +194,21 @@ pluginBundle {
 
 publishPlugins.enabled = isRelease()
 
-def javaDocFolder = isRelease() ? project.version : 'snapshot'
+def javaDocFolder = isRelease() ? project.version : 'snapshots'
 
+githubPages() {
+    repoUri = "https://${SCM_URL}.git"
+    targetBranch = 'gh-pages'
 
-    githubPages() {
-        repoUri = "https://${SCM_URL}.git"
-        targetBranch = 'gh-pages'
-
-        pages {
-            from groovydoc.getDestinationDir()
-            into "javadoc${File.separator}${javaDocFolder}"
-        }
-
-        credentials {
-            username = System.getenv('GH_TOKEN')
-            password = ''
-        }
-
-        commitMessage = "Publish javadoc for ${project.version} version"
+    pages {
+        from groovydoc.getDestinationDir()
+        into "groovydoc${File.separator}${javaDocFolder}"
     }
+
+    credentials {
+        username = System.getenv('GH_TOKEN')
+        password = ''
+    }
+
+    commitMessage = "Publish groovydoc for ${project.version} version"
+}
