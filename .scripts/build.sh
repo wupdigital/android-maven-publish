@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build
-./gradlew check jacocoTestReport coveralls
+./gradlew build jacocoTestReport coveralls
 
 if [ "$TRAVIS_REPO_SLUG" == "wupdigital/android-maven-publish" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
 	# Publish the artifacts

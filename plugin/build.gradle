@@ -14,9 +14,6 @@ plugins {
     id 'org.ajoberstar.github-pages' version '1.7.2'
 }
 
-group 'digital.wup'
-version '1.0.0-SNAPSHOT'
-
 test {
     testLogging {
         events 'passed', 'skipped', 'failed'
@@ -51,7 +48,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
-    classifier = 'groovydoc'
+    classifier = 'javadoc'
     from groovydoc.getDestinationDir()
 }
 
@@ -60,7 +57,7 @@ def isRelease() {
 }
 
 def scmTag() {
-    isRelease() ? 'master' : project.version
+    isRelease() ? project.version : 'master'
 }
 
 def pomConfig = {
@@ -75,7 +72,7 @@ def pomConfig = {
         developer {
             name 'Balázs Varga'
             email 'balazs.varga@wup.hu'
-            organization 'WUP Ltd.'
+            organization 'W.UP Ltd.'
             organizationUrl 'http://wup.digital'
         }
     }
@@ -95,6 +92,9 @@ publishing {
     publications {
         maven(MavenPublication) {
             from components.java
+            groupId project.group
+            artifactId project.name
+            version project.version
             artifact sourcesJar
             artifact groovydocJar
             pom.withXml {
@@ -167,7 +167,7 @@ if (isRelease()) {
     }
 
     publish.dependsOn([bintrayUpload])
-    bintrayUpload.dependsOn(['generatePomFileForPluginMavenPublication',
+    bintrayUpload.dependsOn(['generatePomFileForMavenPublication',
                              sourcesJar,
                              groovydocJar])
 }
