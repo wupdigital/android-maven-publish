@@ -19,15 +19,8 @@ package digital.wup.android_maven_publish
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.gradle.api.publish.maven.tasks.GenerateMavenPom
-import org.gradle.api.tasks.TaskContainer
-import org.gradle.model.Mutate
-import org.gradle.model.RuleSource
 
 class AndroidMavenPublishPlugin implements Plugin<Project> {
 
@@ -69,51 +62,5 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
 
     private static void addAndroidComponent(Project project) {
         project.components.add(new AndroidLibrary(project.configurations))
-    }
-
-    @SuppressWarnings('GroovyUnusedDeclaration')
-    static class Rule extends RuleSource {
-
-        @Mutate
-        public void realizePublishingTasks(TaskContainer tasks, PublishingExtension extension) {
-
-            if (!extension.needCompileDependencies()) {
-                return
-            }
-
-            PublicationContainer publications = extension.getPublications();
-            Iterator i$ = publications.withType(MavenPublicationInternal.class).iterator();
-
-            while (i$.hasNext()) {
-                MavenPublicationInternal publication = (MavenPublicationInternal) i$.next();
-                String publicationName = publication.getName();
-                this.createGeneratePomTask(tasks, publication, publicationName);
-            }
-        }
-
-        @SuppressWarnings("GrMethodMayBeStatic")
-        private void createGeneratePomTask(TaskContainer tasks,
-                                           final MavenPublicationInternal publication,
-                                           final String publicationName) {
-            String descriptorTaskName = "generatePomFileFor" + publicationName.capitalize() + "Publication";
-
-            //noinspection GroovyAssignabilityCheck
-            GenerateMavenPom oldGenerateMavenPomTask = tasks.getByName(descriptorTaskName)
-
-            tasks.remove(oldGenerateMavenPomTask)
-
-            tasks.create(descriptorTaskName, BugFixedGenerateMavenPom.class, new Action<BugFixedGenerateMavenPom>() {
-                @Override
-                void execute(BugFixedGenerateMavenPom bugFixedGenerateMavenPom) {
-
-                    bugFixedGenerateMavenPom.description = oldGenerateMavenPomTask.description
-                    bugFixedGenerateMavenPom.group = oldGenerateMavenPomTask.group
-                    bugFixedGenerateMavenPom.pom = oldGenerateMavenPomTask.pom
-                    bugFixedGenerateMavenPom.destination = oldGenerateMavenPomTask.destination
-                }
-            })
-
-            publication.setPomFile(((Task) tasks.getByName(descriptorTaskName)).getOutputs().getFiles());
-        }
     }
 }
