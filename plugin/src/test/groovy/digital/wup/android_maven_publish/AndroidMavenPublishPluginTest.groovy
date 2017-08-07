@@ -35,17 +35,9 @@ class AndroidMavenPublishPluginTest extends AbstractProjectBuilderSpec {
         project.plugins.hasPlugin(AndroidMavenPublishPlugin)
     }
 
-    def 'publishing extension extended'() {
-        when:
-        project.ext.useCompileDependencies = true
-
-        then:
-        publishing.needCompileDependencies() == true
-    }
-
     def 'use runtime dependencies'() {
         expect:
-        publishing.needCompileDependencies() == false
+        project.useCompileDependencies == false
     }
 
     def 'android library component has added'() {
@@ -59,19 +51,7 @@ class AndroidMavenPublishPluginTest extends AbstractProjectBuilderSpec {
         publishing.useCompileDependencies(true)
 
         then:
-        project.useCompileDependencies == 'true'
-    }
-
-    def 'generate pom task has replaced'() {
-        when:
-        project.ext.useCompileDependencies = true
-        publishing.publications.create('test', MavenPublication)
-        closeTaskContainer()
-
-        then:
-        project.tasks['generatePomFileForTestPublication'] != null
-        project.tasks['generatePomFileForTestPublication'] instanceof BugFixedGenerateMavenPom
-
+        project.useCompileDependencies == true
     }
 
     def 'generate pom task stay in original'() {

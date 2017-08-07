@@ -1,6 +1,8 @@
 package digital.wup.android_maven_publish
 
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.attributes.Usage
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.TextUtil
 
 class AndroidLibraryTest extends AbstractProjectBuilderSpec {
@@ -23,10 +25,33 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
 
     }
 
-    def 'compile usage available'() {
+    def 'runtime usage available'() {
         expect:
         !component.usages.isEmpty()
-        component.usages[0].name == 'compile'
+        component.usages[0].usage == Usage.FOR_RUNTIME
+    }
+
+    def 'compile usage available'() {
+        when:
+        project.repositories {
+            jcenter()
+        }
+        project.android {
+            compileSdkVersion 25
+            buildToolsVersion '25.0.3'
+        }
+        project.publishing {
+            publications {
+                useCompileDependencies true
+                maven(MavenPublication) {
+                    from project.components.android
+                }
+            }
+        }
+        project.evaluate()
+        then:
+        project.useCompileDependencies == true
+        project.components.android.usages[0].usage == Usage.FOR_COMPILE
     }
 
     def 'get dependencies from default configuration'() {

@@ -20,20 +20,21 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.component.SoftwareComponentInternal
-import org.gradle.api.internal.component.Usage
+import org.gradle.api.internal.component.UsageContext
 
 final class AndroidLibrary implements SoftwareComponentInternal {
 
-    private final Usage compileUsage;
+    private final UsageContext usage;
 
-    AndroidLibrary(ConfigurationContainer configurations) {
-        compileUsage = new CompileUsage(configurations)
+    AndroidLibrary(ConfigurationContainer configurations, UsageProvider usageProvider) {
+        usage = new RuntimeUsage(configurations, usageProvider)
     }
 
     @Override
-    Set<Usage> getUsages() {
-        return Collections.singleton(compileUsage)
+    Set<UsageContext> getUsages() {
+        return Collections.singleton(usage)
     }
 
     @Override
@@ -41,13 +42,20 @@ final class AndroidLibrary implements SoftwareComponentInternal {
         return 'android'
     }
 
-    private final class CompileUsage implements Usage {
+    private final class RuntimeUsage implements UsageContext {
 
         private final ConfigurationContainer configurations
         private DependencySet dependencies
+        private UsageProvider usageProvider
 
-        CompileUsage(ConfigurationContainer configurations) {
+        RuntimeUsage(ConfigurationContainer configurations, UsageProvider usageProvider) {
             this.configurations = configurations
+            this.usageProvider = usageProvider
+        }
+
+        @Override
+        Usage getUsage() {
+            return usageProvider.getUsage()
         }
 
         @Override
@@ -67,11 +75,6 @@ final class AndroidLibrary implements SoftwareComponentInternal {
                 dependencies = configurations.getByName("default").getAllDependencies()
             }
             return dependencies.withType(ModuleDependency)
-        }
-
-        @Override
-        String getName() {
-            return 'compile'
         }
     }
 }
