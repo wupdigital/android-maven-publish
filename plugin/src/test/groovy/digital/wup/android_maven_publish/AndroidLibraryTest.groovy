@@ -37,8 +37,8 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 25
-            buildToolsVersion '25.0.3'
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
         }
         project.publishing {
             publications {
@@ -60,8 +60,8 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 25
-            buildToolsVersion '25.0.3'
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
         }
         project.dependencies {
             compile 'com.google.code.gson:gson:2.8.1'
@@ -80,8 +80,8 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.android {
             defaultPublishConfig 'debug'
-            compileSdkVersion 25
-            buildToolsVersion '25.0.3'
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
         }
         project.dependencies {
             releaseCompile 'com.google.code.gson:gson:2.8.1'
@@ -95,8 +95,8 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
     def 'get default artifacts'() {
         when:
         project.android {
-            compileSdkVersion 25
-            buildToolsVersion '25.0.3'
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
         }
         project.evaluate()
         then:
@@ -107,12 +107,16 @@ class AndroidLibraryTest extends AbstractProjectBuilderSpec {
     def 'get non default artifacts'() {
         when:
         project.android {
-            publishNonDefault true
-            compileSdkVersion 25
-            buildToolsVersion '25.0.3'
+            publishNonDefault true // Deprecated it has no effect
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
+
+            buildTypes {
+                debug {}
+            }
         }
         project.evaluate()
         then:
-        component.usages[0].artifacts.size() == 2
+        component.usages[0].artifacts.size() == 1
     }
 }
