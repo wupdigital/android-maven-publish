@@ -16,36 +16,20 @@
 
 package digital.wup.android_maven_publish
 
-import org.gradle.api.Action
+import groovy.util.logging.Slf4j
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.Usage
-import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 
+@Slf4j
 class AndroidMavenPublishPlugin implements Plugin<Project> {
 
     @Override
     void apply(final Project project) {
         project.plugins.apply(MavenPublishPlugin)
 
-        project.ext.useCompileDependencies = false
-
-        project.extensions.configure(PublishingExtension.class, new Action<PublishingExtension>() {
-            @Override
-            void execute(PublishingExtension publishingExtension) {
-                configurePublishingExtension(project, publishingExtension)
-            }
-        })
-
         if (isAndroidLibraryPluginApplied(project)) {
             addAndroidComponent(project)
-        }
-    }
-
-    private static void configurePublishingExtension(Project project, PublishingExtension publishingExtension) {
-        publishingExtension.metaClass.useCompileDependencies << { useCompileDeps ->
-            project.useCompileDependencies = useCompileDeps
         }
     }
 
@@ -54,11 +38,6 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
     }
 
     private static void addAndroidComponent(Project project) {
-        project.components.add(new AndroidLibrary(project.configurations, new UsageProvider() {
-            @Override
-            Usage getUsage() {
-                return project.useCompileDependencies ? Usage.FOR_COMPILE : Usage.FOR_RUNTIME
-            }
-        }))
+        project.components.add(new AndroidLibrary(project))
     }
 }

@@ -17,8 +17,6 @@
 package digital.wup.android_maven_publish
 
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 
 class AndroidMavenPublishPluginTest extends AbstractProjectBuilderSpec {
 
@@ -35,46 +33,10 @@ class AndroidMavenPublishPluginTest extends AbstractProjectBuilderSpec {
         project.plugins.hasPlugin(AndroidMavenPublishPlugin)
     }
 
-    def 'use runtime dependencies'() {
-        expect:
-        project.useCompileDependencies == false
-    }
-
     def 'android library component has added'() {
         expect:
         project.components.android != null
         project.components.android instanceof AndroidLibrary
-    }
-
-    def 'use compile deps property configurable with publishing extension'() {
-        when:
-        publishing.useCompileDependencies(true)
-
-        then:
-        project.useCompileDependencies == true
-    }
-
-    def 'generate pom task stay in original'() {
-        when:
-        project.ext.useCompileDependencies = false
-        publishing.publications.create('test', MavenPublication)
-        closeTaskContainer()
-
-        then:
-        project.tasks['generatePomFileForTestPublication'] != null
-        project.tasks['generatePomFileForTestPublication'] instanceof GenerateMavenPom
-    }
-
-    def 'pom dir moves with build dir'() {
-        when:
-        project.ext.useCompileDependencies = true
-        publishing.publications.create('test', MavenPublication)
-        def newBuildDir = project.file('changed')
-        project.buildDir = newBuildDir
-        closeTaskContainer()
-
-        then:
-        project.tasks['generatePomFileForTestPublication'].destination == new File(newBuildDir, 'publications/test/pom-default.xml')
     }
 
     void closeTaskContainer() {

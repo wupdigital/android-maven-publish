@@ -16,6 +16,7 @@
 
 package digital.wup.android_maven_publish
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ModuleDependency
@@ -26,15 +27,17 @@ import org.gradle.api.internal.component.UsageContext
 
 final class AndroidLibrary implements SoftwareComponentInternal {
 
-    private final UsageContext usage;
+    private final UsageContext compileUsage;
+    private final RuntimeUsage runtimeUsage;
 
-    AndroidLibrary(ConfigurationContainer configurations, UsageProvider usageProvider) {
-        usage = new RuntimeUsage(configurations, usageProvider)
+    AndroidLibrary(Project project) {
+        compileUsage = new CompileUsage(project)
+        runtimeUsage = new RuntimeUsage(project)
     }
 
     @Override
     Set<UsageContext> getUsages() {
-        return Collections.singleton(usage)
+        return Collections.unmodifiableSet([compileUsage, runtimeUsage].toSet())
     }
 
     @Override
@@ -42,37 +45,63 @@ final class AndroidLibrary implements SoftwareComponentInternal {
         return 'android'
     }
 
-    private final class RuntimeUsage implements UsageContext {
+    private final class CompileUsage implements UsageContext {
 
-        private final ConfigurationContainer configurations
+        private Project project
+        private ConfigurationContainer configurations
         private DependencySet dependencies
-        private UsageProvider usageProvider
 
-        RuntimeUsage(ConfigurationContainer configurations, UsageProvider usageProvider) {
-            this.configurations = configurations
-            this.usageProvider = usageProvider
+        CompileUsage(Project project) {
+            this.project = project
+            this.configurations = project.configurations
         }
 
         @Override
         Usage getUsage() {
-            return usageProvider.getUsage()
+            return Usage.FOR_COMPILE
         }
 
         @Override
         Set<PublishArtifact> getArtifacts() {
-            Set<PublishArtifact> artifacts = configurations.getByName('archives').allArtifacts.toSet()
-            return artifacts.unique(false, new Comparator<PublishArtifact>() {
-                @Override
-                int compare(PublishArtifact a1, PublishArtifact a2) {
-                    "${a1.file.path}${a1.type}${a1.classifier}" <=> "${a2.file.path}${a2.type}${a2.classifier}"
-                }
-            })
+            return Collections.unmodifiableSet(configurations.getByName('archives').allArtifacts.toSet())
         }
 
         @Override
         Set<ModuleDependency> getDependencies() {
             if (dependencies == null) {
-                dependencies = configurations.getByName("default").getAllDependencies()
+                def configurationName = "${project.android.defaultPublishConfig}ApiElements"
+                dependencies = configurations.getByName(configurationName).allDependencies
+            }
+            return dependencies.withType(ModuleDependency)
+        }
+    }
+
+    private final class RuntimeUsage implements UsageContext {
+
+        private Project project
+        private ConfigurationContainer configurations
+        private DependencySet dependencies
+
+        RuntimeUsage(Project project) {
+            this.project = project
+            this.configurations = project.configurations
+        }
+
+        @Override
+        Usage getUsage() {
+            return Usage.FOR_RUNTIME
+        }
+
+        @Override
+        Set<PublishArtifact> getArtifacts() {
+            return Collections.unmodifiableSet(configurations.getByName('archives').allArtifacts.toSet())
+        }
+
+        @Override
+        Set<ModuleDependency> getDependencies() {
+            if (dependencies == null) {
+                def configurationName = "${project.android.defaultPublishConfig}RuntimeElements"
+                dependencies = configurations.getByName(configurationName).allDependencies
             }
             return dependencies.withType(ModuleDependency)
         }
