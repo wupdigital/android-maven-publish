@@ -17,8 +17,10 @@
 package digital.wup.android_maven_publish
 
 import groovy.util.logging.Slf4j
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 
 @Slf4j
@@ -27,6 +29,17 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
     @Override
     void apply(final Project project) {
         project.plugins.apply(MavenPublishPlugin)
+
+        // For backward compatibility
+        project.extensions.configure(PublishingExtension, new Action<PublishingExtension>() {
+            @Override
+            void execute(PublishingExtension publishingExtension) {
+                publishingExtension.metaClass.useCompileDependencies << { useCompileDeps ->
+                    // Do nothing
+                }
+            }
+        })
+
 
         if (isAndroidLibraryPluginApplied(project)) {
             addAndroidComponent(project)
