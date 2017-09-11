@@ -16,6 +16,7 @@
 
 package digital.wup.android_maven_publish
 
+import com.android.build.gradle.LibraryExtension
 import groovy.util.logging.Slf4j
 import org.gradle.api.Action
 import org.gradle.api.Plugin
@@ -36,21 +37,24 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
             void execute(PublishingExtension publishingExtension) {
                 publishingExtension.metaClass.useCompileDependencies << { useCompileDeps ->
                     // Do nothing
+                    log.warn("useCompileDependencies is deprecated and no effect anymore. Use api configuration for compile dependencies")
                 }
             }
         })
 
-
         if (isAndroidLibraryPluginApplied(project)) {
-            addAndroidComponent(project)
+            def android = project.extensions.getByType(LibraryExtension)
+
+            android.libraryVariants.all { v ->
+                project.components.add(new AndroidVariantLibrary(project, v))
+            }
+
+            // For default publish config
+            project.components.add(new AndroidLibrary(project))
         }
     }
 
     private static boolean isAndroidLibraryPluginApplied(Project project) {
         return project.plugins.hasPlugin('com.android.library')
-    }
-
-    private static void addAndroidComponent(Project project) {
-        project.components.add(new AndroidLibrary(project))
     }
 }
