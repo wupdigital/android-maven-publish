@@ -24,18 +24,20 @@ abstract class AbstractProjectBuilderSpec extends Specification {
     protected File root
 
     protected ProjectInternal project
+    private static int testFolderId = 0;
 
     def setup() {
-        root = new File('build/tmp/test')
+        root = new File("build/tmp/test-app${testFolderId++}")
+        root.mkdirs()
         cleanFolder(root)
         project = TestUtil.createRootProject(root)
     }
 
-    public static void cleanFolder(File folder) {
+    static void cleanFolder(File folder) {
         File[] files = folder.listFiles();
-        if(files!=null) { //some JVMs return null for empty dirs
-            for(File f: files) {
-                if(f.isDirectory()) {
+        if (files != null) { //some JVMs return null for empty dirs
+            for (File f : files) {
+                if (f.isDirectory()) {
                     cleanFolder(f);
                 } else {
                     f.delete();
