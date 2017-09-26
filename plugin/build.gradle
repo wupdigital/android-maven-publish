@@ -1,9 +1,3 @@
-buildscript {
-    dependencies {
-        classpath 'org.jacoco:org.jacoco.core:0.7.9'
-    }
-}
-
 plugins {
     id 'groovy'
     id 'jacoco'
