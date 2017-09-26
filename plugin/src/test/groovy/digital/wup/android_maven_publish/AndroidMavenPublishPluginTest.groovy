@@ -36,7 +36,7 @@ class AndroidMavenPublishPluginTest extends AbstractProjectBuilderSpec {
     def 'android library component has added'() {
         expect:
         project.components.android != null
-        project.components.android instanceof AndroidLibrary
+        project.components.android instanceof AndroidVariantLibrary
     }
 
     void closeTaskContainer() {

@@ -16,48 +16,49 @@
 
 package digital.wup.android_maven_publish
 
-import com.android.build.gradle.api.BaseVariant
-import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Usage
-import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 
 final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
-    private final String variantName
-    private final UsageContext compileUsage
-    private final UsageContext runtimeUsage
+    private final Set<UsageContext> _usages
+    private final PublishConfiguration publishConfiguration
 
-    AndroidVariantLibrary(Project project, BaseVariant variant) {
-        variantName = variant.name
-        compileUsage = new CompileUsage(project, variant)
-        runtimeUsage = new RuntimeUsage(project, variant)
+    AndroidVariantLibrary(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
+        this.publishConfiguration = publishConfiguration
+
+        final UsageContext compileUsage = new CompileUsage(configurations, publishConfiguration)
+        final UsageContext runtimeUsage = new RuntimeUsage(configurations, publishConfiguration)
+
+        def usages = [compileUsage]
+        if (configurations.findByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME)) {
+            usages += runtimeUsage
+        }
+        _usages = Collections.unmodifiableSet(usages.toSet())
     }
 
     @Override
     Set<UsageContext> getUsages() {
-        return Collections.unmodifiableSet([compileUsage, runtimeUsage].toSet())
+        return _usages
     }
 
     @Override
     String getName() {
-        return "android${variantName.capitalize()}"
+        return publishConfiguration.name
     }
-
 
     private static class CompileUsage extends BaseUsage {
 
         private DependencySet dependencies
 
-        CompileUsage(Project project, BaseVariant variant) {
-            super(project, variant)
+        CompileUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
+            super(configurations, publishConfiguration)
         }
 
         @Override
@@ -68,7 +69,12 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         @Override
         Set<ModuleDependency> getDependencies() {
             if (dependencies == null) {
-                dependencies = configurations.findByName(variant.name + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()).allDependencies
+                def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                if (configurations.findByName(apiElements)) {
+                    dependencies = configurations.findByName(apiElements).allDependencies
+                } else {
+                    dependencies = configurations.findByName('default').allDependencies
+                }
             }
             return dependencies.withType(ModuleDependency)
         }
@@ -78,8 +84,8 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         private DependencySet dependencies
 
-        RuntimeUsage(Project project, BaseVariant variant) {
-            super(project, variant)
+        RuntimeUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
+            super(configurations, publishConfiguration)
         }
 
         @Override
@@ -90,33 +96,25 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         @Override
         Set<ModuleDependency> getDependencies() {
             if (dependencies == null) {
-                dependencies = configurations.findByName(variant.name + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()).allDependencies
+                def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                dependencies = configurations.findByName(runtimeElements).allDependencies
             }
             return dependencies.withType(ModuleDependency)
         }
     }
 
     private static abstract class BaseUsage implements UsageContext {
-        protected final Project project
-        protected final BaseVariant variant
         protected final ConfigurationContainer configurations
+        protected final PublishConfiguration publishConfiguration;
 
-        BaseUsage(Project project, BaseVariant variant) {
-            this.project = project
-            this.configurations = project.configurations
-            this.variant = variant
+        BaseUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
+            this.configurations = configurations
+            this.publishConfiguration = publishConfiguration
         }
 
         @Override
         Set<PublishArtifact> getArtifacts() {
-            def artifacts = variant.outputs.collect { o ->
-                def archiveTask = project.tasks.findByName("bundle${variant.name.capitalize()}")
-
-                return new ArchivePublishArtifact(archiveTask as AbstractArchiveTask)
-                        .builtBy(o.assemble)
-            }.toSet()
-
-            return Collections.unmodifiableSet(artifacts)
+            return publishConfiguration.artifacts
         }
     }
 }

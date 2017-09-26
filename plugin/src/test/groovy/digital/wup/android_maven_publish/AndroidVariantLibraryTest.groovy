@@ -1,25 +1,12 @@
-/*
- * Copyright 2017 W.UP Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package digital.wup.android_maven_publish
 
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.attributes.Usage
 import org.gradle.util.TextUtil
 
 class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
+
+    AndroidVariantLibrary component
 
     def 'setup'() {
         File srcFolder = new File(root, "src${File.separator}main")
@@ -33,6 +20,102 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         writer.close()
         project.plugins.apply 'com.android.library'
         project.plugins.apply(AndroidMavenPublishPlugin)
+        component = project.components.android
+
+    }
+
+    def 'get dependencies from compile configuration'() {
+        when:
+        project.repositories {
+            jcenter()
+        }
+        project.android {
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
+        }
+        project.dependencies {
+            compile 'com.google.code.gson:gson:2.8.1'
+        }
+        project.evaluate()
+        def usage = component.usages.find { it.getUsage() == Usage.FOR_COMPILE }
+        then:
+        !usage.dependencies.isEmpty()
+        ((ModuleDependency) usage.dependencies[0]).getGroup() == 'com.google.code.gson'
+        ((ModuleDependency) usage.dependencies[0]).getName() == 'gson'
+    }
+
+    def 'get dependencies from api configuration'() {
+        when:
+        project.repositories {
+            jcenter()
+        }
+        project.android {
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
+        }
+        project.dependencies {
+            api 'com.google.code.gson:gson:2.8.1'
+        }
+        project.evaluate()
+
+        def usage = component.usages.find { it.getUsage() == Usage.FOR_COMPILE }
+        then:
+        !usage.dependencies.isEmpty()
+        ((ModuleDependency) usage.dependencies[0]).getGroup() == 'com.google.code.gson'
+        ((ModuleDependency) usage.dependencies[0]).getName() == 'gson'
+    }
+
+    def 'get dependencies from implementation configuration'() {
+        when:
+        project.repositories {
+            jcenter()
+        }
+        project.android {
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
+        }
+        project.dependencies {
+            implementation 'com.google.code.gson:gson:2.8.1'
+        }
+        project.evaluate()
+        def usage = component.usages.find { it.getUsage() == Usage.FOR_RUNTIME }
+        then:
+
+        !usage.dependencies.isEmpty()
+        ((ModuleDependency) usage.dependencies[0]).getGroup() == 'com.google.code.gson'
+        ((ModuleDependency) usage.dependencies[0]).getName() == 'gson'
+    }
+
+    def 'dependencies for build type'() {
+        when:
+        project.repositories {
+            jcenter()
+        }
+        project.android {
+            defaultPublishConfig 'debug'
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
+        }
+        project.dependencies {
+            releaseCompile 'com.google.code.gson:gson:2.8.1'
+        }
+        project.evaluate()
+
+        def usage = component.usages.find { it.getUsage() == Usage.FOR_COMPILE }
+        then:
+        usage.dependencies.isEmpty()
+    }
+
+    def 'get default artifacts'() {
+        when:
+        project.android {
+            compileSdkVersion 26
+            buildToolsVersion '26.0.0'
+        }
+        project.evaluate()
+        then:
+        !component.usages[0].artifacts.isEmpty()
+        component.usages[0].artifacts[0].extension == 'aar'
     }
 
     def 'android library components added by build variant'() {

@@ -45,12 +45,16 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
         if (isAndroidLibraryPluginApplied(project)) {
             def android = project.extensions.getByType(LibraryExtension)
 
+            def configurations = project.configurations
+
             android.libraryVariants.all { v ->
-                project.components.add(new AndroidVariantLibrary(project, v))
+                def publishConfig = new VariantPublishConfiguration(v)
+                project.components.add(new AndroidVariantLibrary(configurations, publishConfig))
             }
 
             // For default publish config
-            project.components.add(new AndroidLibrary(project))
+            def defaultPublishConfig = new DefaultPublishConfiguration(project)
+            project.components.add(new AndroidVariantLibrary(configurations, defaultPublishConfig))
         }
     }
 
