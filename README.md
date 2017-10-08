@@ -8,19 +8,19 @@ Modification of the standard Maven Publish plugin to be compatible with android-
 
 ## Applying the plugin
 
-```
+```groovy
 plugins {
-    id 'digital.wup.android-maven-publish' version '2.0.0'
+    id 'digital.wup.android-maven-publish' version '3.0.0'
 }
 ```
 -or-
-```
+```groovy
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'digital.wup:android-maven-publish:2.0.0'
+        classpath 'digital.wup:android-maven-publish:3.0.0'
     }
 }
 
@@ -37,7 +37,7 @@ The android component is used to determine which aar files to publish, and which
 
 Please refer to the standard Maven Publish plugin documentation: https://docs.gradle.org/current/userguide/publishing_maven.html
 
-```
+```groovy
 publishing {
     publications {
         mavenAar(MavenPublication) {
@@ -47,15 +47,19 @@ publishing {
 }
 ```
 
-This plugin also fixes [issue](https://github.com/gradle/gradle/issues/1118) by adding a method called `useCompileDependencies`. The method called with a Boolean true parameter will use compile dependencies instead of runtime ones.
+If you want publish custom variants:
 
-```
+```groovy
 publishing {
-    useCompileDependencies true
-    
     publications {
-        mavenAar(MavenPublication) {
-            from components.java
+        android.libraryVariants.all { v ->
+
+            "maven${variant.name.capitalize()}Aar"(MavenPublication) {
+                from components.findByName("android${v.name.capitalize()}")
+                groupId 'digital.wup.test-publish'
+                artifactId 'test-publish'
+                version "1.0.0-${variant.name}"
+            }
         }
     }
 }
@@ -67,6 +71,7 @@ publishing {
 | ------------- | ----------- | ----------- |
 | 1.0.0 | digital.wup:android-maven-publish:1.0.0 | 2.4 - 3.3 |
 | 2.0.0 | digital.wup:android-maven-publish:2.0.0 | 3.4 - 4.0 |
+| 3.0.0 | digital.wup:android-maven-publish:3.0.0 | 3.4 - 4.1 |
 
 ## License
 
