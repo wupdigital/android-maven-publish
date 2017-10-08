@@ -31,7 +31,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.android {
             compileSdkVersion 26
-            buildToolsVersion '26.0.0'
+            buildToolsVersion '26.0.2'
         }
         project.dependencies {
             compile 'com.google.code.gson:gson:2.8.1'
@@ -51,7 +51,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.android {
             compileSdkVersion 26
-            buildToolsVersion '26.0.0'
+            buildToolsVersion '26.0.2'
         }
         project.dependencies {
             api 'com.google.code.gson:gson:2.8.1'
@@ -72,7 +72,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.android {
             compileSdkVersion 26
-            buildToolsVersion '26.0.0'
+            buildToolsVersion '26.0.2'
         }
         project.dependencies {
             implementation 'com.google.code.gson:gson:2.8.1'
@@ -94,7 +94,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         project.android {
             defaultPublishConfig 'debug'
             compileSdkVersion 26
-            buildToolsVersion '26.0.0'
+            buildToolsVersion '26.0.2'
         }
         project.dependencies {
             releaseCompile 'com.google.code.gson:gson:2.8.1'
@@ -110,7 +110,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         when:
         project.android {
             compileSdkVersion 26
-            buildToolsVersion '26.0.0'
+            buildToolsVersion '26.0.2'
         }
         project.evaluate()
         then:
@@ -122,7 +122,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         when:
         project.android {
             compileSdkVersion 26
-            buildToolsVersion '26.0.0'
+            buildToolsVersion '26.0.2'
             defaultPublishConfig 'prodRelease'
 
             flavorDimensions "color"
@@ -147,7 +147,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         when:
         project.android {
             compileSdkVersion 26
-            buildToolsVersion '26.0.0'
+            buildToolsVersion '26.0.2'
             defaultPublishConfig 'prodRelease'
 
             flavorDimensions "color"
