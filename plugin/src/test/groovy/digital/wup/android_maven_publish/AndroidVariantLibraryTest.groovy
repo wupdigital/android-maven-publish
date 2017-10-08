@@ -2,11 +2,18 @@ package digital.wup.android_maven_publish
 
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.attributes.Usage
+import org.gradle.api.internal.model.DefaultObjectFactory
+import org.gradle.api.internal.model.NamedObjectInstantiator
+import org.gradle.api.model.ObjectFactory
+import org.gradle.internal.reflect.DirectInstantiator
 import org.gradle.util.TextUtil
 
 class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
 
     AndroidVariantLibrary component
+    ObjectFactory objectFactory =  new DefaultObjectFactory(DirectInstantiator.INSTANCE, NamedObjectInstantiator.INSTANCE);
+    Usage runtime;
+    Usage compile;
 
     def 'setup'() {
         File srcFolder = new File(root, "src${File.separator}main")
@@ -21,6 +28,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         project.plugins.apply 'com.android.library'
         project.plugins.apply(AndroidMavenPublishPlugin)
         component = project.components.android
+        runtime = objectFactory.named(Usage.class, Usage.JAVA_RUNTIME);
+        compile = objectFactory.named(Usage.class, Usage.JAVA_API);
 
     }
 
@@ -37,7 +46,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
             compile 'com.google.code.gson:gson:2.8.1'
         }
         project.evaluate()
-        def usage = component.usages.find { it.getUsage() == Usage.FOR_COMPILE }
+        def usage = component.usages.find { it.getUsage() == compile }
         then:
         !usage.dependencies.isEmpty()
         ((ModuleDependency) usage.dependencies[0]).getGroup() == 'com.google.code.gson'
@@ -58,7 +67,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.evaluate()
 
-        def usage = component.usages.find { it.getUsage() == Usage.FOR_COMPILE }
+        def usage = component.usages.find { it.getUsage() == compile }
         then:
         !usage.dependencies.isEmpty()
         ((ModuleDependency) usage.dependencies[0]).getGroup() == 'com.google.code.gson'
@@ -78,7 +87,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
             implementation 'com.google.code.gson:gson:2.8.1'
         }
         project.evaluate()
-        def usage = component.usages.find { it.getUsage() == Usage.FOR_RUNTIME }
+        def usage = component.usages.find { it.getUsage() == runtime }
         then:
 
         !usage.dependencies.isEmpty()
@@ -101,7 +110,7 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.evaluate()
 
-        def usage = component.usages.find { it.getUsage() == Usage.FOR_COMPILE }
+        def usage = component.usages.find { it.getUsage() == compile }
         then:
         usage.dependencies.isEmpty()
     }
@@ -166,8 +175,12 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.evaluate()
 
-        def usageDevRelease = project.components.androidDevRelease.usages.find { it.getUsage() == Usage.FOR_RUNTIME }
-        def usageProdRelease = project.components.androidProdRelease.usages.find { it.getUsage() == Usage.FOR_RUNTIME }
+        def usageDevRelease = project.components.findByName('androidDevRelease').usages.find {
+            it.getUsage() == runtime
+        }
+        def usageProdRelease = project.components.androidProdRelease.usages.find {
+            it.getUsage() == runtime
+        }
 
         then:
         !usageDevRelease.dependencies.isEmpty()

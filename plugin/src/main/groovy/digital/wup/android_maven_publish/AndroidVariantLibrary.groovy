@@ -23,6 +23,7 @@ import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
 
 final class AndroidVariantLibrary implements SoftwareComponentInternal {
@@ -30,11 +31,11 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
     private final Set<UsageContext> _usages
     private final PublishConfiguration publishConfiguration
 
-    AndroidVariantLibrary(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
+    AndroidVariantLibrary(ObjectFactory objectFactory, ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
         this.publishConfiguration = publishConfiguration
 
-        final UsageContext compileUsage = new CompileUsage(configurations, publishConfiguration)
-        final UsageContext runtimeUsage = new RuntimeUsage(configurations, publishConfiguration)
+        final UsageContext compileUsage = new CompileUsage(configurations, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_API))
+        final UsageContext runtimeUsage = new RuntimeUsage(configurations, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_RUNTIME))
 
         def usages = [compileUsage]
         if (configurations.findByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME)) {
@@ -42,7 +43,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         }
         _usages = Collections.unmodifiableSet(usages.toSet())
     }
-
+    
     @Override
     Set<UsageContext> getUsages() {
         return _usages
@@ -57,13 +58,8 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         private DependencySet dependencies
 
-        CompileUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
-            super(configurations, publishConfiguration)
-        }
-
-        @Override
-        Usage getUsage() {
-            return Usage.FOR_COMPILE
+        CompileUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration, Usage usage) {
+            super(configurations, publishConfiguration, usage)
         }
 
         @Override
@@ -84,13 +80,8 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         private DependencySet dependencies
 
-        RuntimeUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
-            super(configurations, publishConfiguration)
-        }
-
-        @Override
-        Usage getUsage() {
-            return Usage.FOR_RUNTIME
+        RuntimeUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration, Usage usage) {
+            super(configurations, publishConfiguration, usage)
         }
 
         @Override
@@ -106,10 +97,17 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
     private static abstract class BaseUsage implements UsageContext {
         protected final ConfigurationContainer configurations
         protected final PublishConfiguration publishConfiguration;
+        protected final Usage usage;
 
-        BaseUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
+        BaseUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration, Usage usage) {
             this.configurations = configurations
             this.publishConfiguration = publishConfiguration
+            this.usage = usage;
+        }
+
+        @Override
+        Usage getUsage() {
+            return usage;
         }
 
         @Override

@@ -21,11 +21,21 @@ import groovy.util.logging.Slf4j
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 
+import javax.inject.Inject
+
 @Slf4j
 class AndroidMavenPublishPlugin implements Plugin<Project> {
+
+    private ObjectFactory objectFactory;
+
+    @Inject
+    public AndroidMavenPublishPlugin(ObjectFactory objectFactory) {
+        this.objectFactory = objectFactory;
+    }
 
     @Override
     void apply(final Project project) {
@@ -49,12 +59,12 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
 
             android.libraryVariants.all { v ->
                 def publishConfig = new VariantPublishConfiguration(v)
-                project.components.add(new AndroidVariantLibrary(configurations, publishConfig))
+                project.components.add(new AndroidVariantLibrary(objectFactory, configurations, publishConfig))
             }
 
             // For default publish config
             def defaultPublishConfig = new DefaultPublishConfiguration(project)
-            project.components.add(new AndroidVariantLibrary(configurations, defaultPublishConfig))
+            project.components.add(new AndroidVariantLibrary(objectFactory, configurations, defaultPublishConfig))
         }
     }
 
