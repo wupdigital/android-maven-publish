@@ -8,25 +8,24 @@ Modification of the standard Maven Publish plugin to be compatible with android-
 
 ## Applying the plugin
 
-```groovy
-plugins {
-    id 'digital.wup.android-maven-publish' version '3.0.0'
-}
-```
+
+    plugins {
+        id 'digital.wup.android-maven-publish' version '3.1.0'
+    }
+
 -or-
-```groovy
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'digital.wup:android-maven-publish:3.0.0'
-    }
-}
 
-apply plugin: 'digital.wup.android-maven-publish'
+    buildscript {
+        repositories {
+            jcenter()
+        }
+        dependencies {
+            classpath 'digital.wup:android-maven-publish:3.1.0'
+        }
+    }
 
-```
+    apply plugin: 'digital.wup.android-maven-publish'
+
 
 ## Documentation
 
@@ -37,33 +36,29 @@ The android component is used to determine which aar files to publish, and which
 
 Please refer to the standard Maven Publish plugin documentation: https://docs.gradle.org/current/userguide/publishing_maven.html
 
-```groovy
-publishing {
-    publications {
-        mavenAar(MavenPublication) {
-            from components.android
-        }
-    }
-}
-```
-
-If you want publish custom variants:
-
-```groovy
-publishing {
-    publications {
-        android.libraryVariants.all { v ->
-
-            "maven${variant.name.capitalize()}Aar"(MavenPublication) {
-                from components.findByName("android${v.name.capitalize()}")
-                groupId 'digital.wup.test-publish'
-                artifactId 'test-publish'
-                version "1.0.0-${variant.name}"
+    publishing {
+        publications {
+            mavenAar(MavenPublication) {
+                from components.android
             }
         }
     }
-}
-```
+
+If you want publish custom variants:
+
+    publishing {
+        publications {
+            android.libraryVariants.all { v ->
+
+                "maven${variant.name.capitalize()}Aar"(MavenPublication) {
+                    from components.findByName("android${v.name.capitalize()}")
+                    groupId 'digital.wup.test-publish'
+                    artifactId 'test-publish'
+                    version "1.0.0-${variant.name}"
+                }
+            }
+        }
+    }
 
 ## Compatibility information
 
@@ -72,6 +67,7 @@ publishing {
 | 1.0.0 | digital.wup:android-maven-publish:1.0.0 | 2.4 - 3.3 |
 | 2.0.0 | digital.wup:android-maven-publish:2.0.0 | 3.4 - 4.0 |
 | 3.0.0 | digital.wup:android-maven-publish:3.0.0 | 3.4 - 4.1 |
+| 3.1.0 | digital.wup:android-maven-publish:3.1.0 | 4.2 -     |
 
 ## License
 
