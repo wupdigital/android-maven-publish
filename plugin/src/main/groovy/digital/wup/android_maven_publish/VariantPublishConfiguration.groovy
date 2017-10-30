@@ -17,15 +17,21 @@
 package digital.wup.android_maven_publish
 
 import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.api.BaseVariantOutput
+import org.gradle.api.Project
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Zip
 
 class VariantPublishConfiguration implements PublishConfiguration {
 
-    final BaseVariant variant
+    private final Map<String, PublishArtifact> artifacts = new HashMap<>()
+    private final Project project
+    private final BaseVariant variant
 
-    VariantPublishConfiguration(BaseVariant variant) {
+    VariantPublishConfiguration(Project project, BaseVariant variant) {
+        this.project = project
         this.variant = variant
     }
 
@@ -42,12 +48,26 @@ class VariantPublishConfiguration implements PublishConfiguration {
     @Override
     Set<PublishArtifact> getArtifacts() {
         def artifacts = variant.outputs.collect { o ->
-            def archiveTask = project.tasks.findByName("bundle${variant.name.capitalize()}")
-
-            return new ArchivePublishArtifact(archiveTask as AbstractArchiveTask)
-                    .builtBy(o.assemble)
+            return cachedArtifact(o)
         }.toSet()
 
         return Collections.unmodifiableSet(artifacts)
+    }
+
+    private PublishArtifact cachedArtifact(BaseVariantOutput o) {
+        PublishArtifact artifact = artifacts.get(o.baseName)
+
+        if (!artifact) {
+            artifact = new ArchivePublishArtifact(findArchiveTask(o))
+                    .builtBy(o.assemble)
+            artifacts.put(o.baseName, artifact)
+        }
+        return artifact
+    }
+
+    private static AbstractArchiveTask findArchiveTask(BaseVariantOutput o) {
+        return (AbstractArchiveTask) o.assemble.dependsOn.find {
+            (it instanceof Zip) && it.name.startsWith('bundle')
+        }
     }
 }

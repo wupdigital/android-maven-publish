@@ -102,12 +102,12 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         BaseUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration, Usage usage) {
             this.configurations = configurations
             this.publishConfiguration = publishConfiguration
-            this.usage = usage;
+            this.usage = usage
         }
 
         @Override
         Usage getUsage() {
-            return usage;
+            return usage
         }
 
         @Override
