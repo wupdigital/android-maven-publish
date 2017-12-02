@@ -48,10 +48,10 @@ If you want publish custom variants:
 
     publishing {
         publications {
-            android.libraryVariants.all { v ->
+            android.libraryVariants.all { variant ->
 
                 "maven${variant.name.capitalize()}Aar"(MavenPublication) {
-                    from components.findByName("android${v.name.capitalize()}")
+                    from components.findByName("android${variant.name.capitalize()}")
                     groupId 'digital.wup.test-publish'
                     artifactId 'test-publish'
                     version "1.0.0-${variant.name}"
