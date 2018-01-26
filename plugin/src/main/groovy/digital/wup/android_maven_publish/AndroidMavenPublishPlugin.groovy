@@ -18,11 +18,10 @@ package digital.wup.android_maven_publish
 
 import com.android.build.gradle.LibraryExtension
 import groovy.util.logging.Slf4j
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.attributes.ImmutableAttributesFactory
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 
 import javax.inject.Inject
@@ -30,27 +29,18 @@ import javax.inject.Inject
 @Slf4j
 class AndroidMavenPublishPlugin implements Plugin<Project> {
 
-    private ObjectFactory objectFactory;
+    private ObjectFactory objectFactory
+    private ImmutableAttributesFactory attributesFactory
 
     @Inject
-    public AndroidMavenPublishPlugin(ObjectFactory objectFactory) {
-        this.objectFactory = objectFactory;
+    public AndroidMavenPublishPlugin(ObjectFactory objectFactory, ImmutableAttributesFactory attributesFactory) {
+        this.objectFactory = objectFactory
+        this.attributesFactory = attributesFactory
     }
 
     @Override
     void apply(final Project project) {
         project.plugins.apply(MavenPublishPlugin)
-
-        // For backward compatibility
-        project.extensions.configure(PublishingExtension, new Action<PublishingExtension>() {
-            @Override
-            void execute(PublishingExtension publishingExtension) {
-                publishingExtension.metaClass.useCompileDependencies << { useCompileDeps ->
-                    // Do nothing
-                    log.warn("useCompileDependencies is deprecated and no effect anymore. Use api configuration for compile dependencies")
-                }
-            }
-        })
 
         if (isAndroidLibraryPluginApplied(project)) {
             def android = project.extensions.getByType(LibraryExtension)
@@ -59,12 +49,12 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
 
             android.libraryVariants.all { v ->
                 def publishConfig = new VariantPublishConfiguration(project, v)
-                project.components.add(new AndroidVariantLibrary(objectFactory, configurations, publishConfig))
+                project.components.add(new AndroidVariantLibrary(objectFactory, configurations, attributesFactory, publishConfig))
             }
 
             // For default publish config
             def defaultPublishConfig = new DefaultPublishConfiguration(project)
-            project.components.add(new AndroidVariantLibrary(objectFactory, configurations, defaultPublishConfig))
+            project.components.add(new AndroidVariantLibrary(objectFactory, configurations, attributesFactory, defaultPublishConfig))
         }
     }
 

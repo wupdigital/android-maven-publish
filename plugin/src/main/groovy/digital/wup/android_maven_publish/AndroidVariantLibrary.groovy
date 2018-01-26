@@ -20,7 +20,10 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
+import org.gradle.api.internal.attributes.ImmutableAttributes
+import org.gradle.api.internal.attributes.ImmutableAttributesFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.model.ObjectFactory
@@ -30,12 +33,14 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
     private final Set<UsageContext> _usages
     private final PublishConfiguration publishConfiguration
+    private final ImmutableAttributesFactory attributesFactory;
 
-    AndroidVariantLibrary(ObjectFactory objectFactory, ConfigurationContainer configurations, PublishConfiguration publishConfiguration) {
+    AndroidVariantLibrary(ObjectFactory objectFactory, ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration) {
         this.publishConfiguration = publishConfiguration
+        this.attributesFactory = attributesFactory
 
-        final UsageContext compileUsage = new CompileUsage(configurations, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_API))
-        final UsageContext runtimeUsage = new RuntimeUsage(configurations, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_RUNTIME))
+        final UsageContext compileUsage = new CompileUsage(configurations, attributesFactory, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_API))
+        final UsageContext runtimeUsage = new RuntimeUsage(configurations, attributesFactory, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_RUNTIME))
 
         def usages = [compileUsage]
         if (configurations.findByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME)) {
@@ -43,7 +48,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         }
         _usages = Collections.unmodifiableSet(usages.toSet())
     }
-    
+
     @Override
     Set<UsageContext> getUsages() {
         return _usages
@@ -58,8 +63,13 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         private DependencySet dependencies
 
-        CompileUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration, Usage usage) {
-            super(configurations, publishConfiguration, usage)
+        CompileUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
+            super(configurations, attributesFactory, publishConfiguration, usage)
+        }
+
+        @Override
+        String getName() {
+            return 'api'
         }
 
         @Override
@@ -80,8 +90,13 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         private DependencySet dependencies
 
-        RuntimeUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration, Usage usage) {
-            super(configurations, publishConfiguration, usage)
+        RuntimeUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
+            super(configurations, attributesFactory, publishConfiguration, usage)
+        }
+
+        @Override
+        String getName() {
+            return 'runtime'
         }
 
         @Override
@@ -97,12 +112,14 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
     private static abstract class BaseUsage implements UsageContext {
         protected final ConfigurationContainer configurations
         protected final PublishConfiguration publishConfiguration;
-        protected final Usage usage;
+        private final Usage usage;
+        private final ImmutableAttributes attributes
 
-        BaseUsage(ConfigurationContainer configurations, PublishConfiguration publishConfiguration, Usage usage) {
+        BaseUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
             this.configurations = configurations
             this.publishConfiguration = publishConfiguration
             this.usage = usage
+            this.attributes = attributesFactory.of(Usage.USAGE_ATTRIBUTE, usage)
         }
 
         @Override
@@ -113,6 +130,11 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         @Override
         Set<PublishArtifact> getArtifacts() {
             return publishConfiguration.artifacts
+        }
+
+        @Override
+        AttributeContainer getAttributes() {
+            return attributes
         }
     }
 }
