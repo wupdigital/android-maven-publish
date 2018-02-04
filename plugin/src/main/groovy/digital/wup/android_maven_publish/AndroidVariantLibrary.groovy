@@ -17,6 +17,7 @@
 package digital.wup.android_maven_publish
 
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.DependencyConstraint
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
@@ -74,6 +75,15 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         @Override
         Set<ModuleDependency> getDependencies() {
+            return getApiDependencies().withType(ModuleDependency)
+        }
+
+        @Override
+        Set<? extends DependencyConstraint> getDependencyConstraints() {
+            return getApiDependencies().withType(DependencyConstraint)
+        }
+
+        private DependencySet getApiDependencies() {
             if (dependencies == null) {
                 def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
                 if (configurations.findByName(apiElements)) {
@@ -82,7 +92,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
                     dependencies = configurations.findByName('default').allDependencies
                 }
             }
-            return dependencies.withType(ModuleDependency)
+            return dependencies
         }
     }
 
@@ -101,11 +111,20 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         @Override
         Set<ModuleDependency> getDependencies() {
+            return getRuntimeDependencies().withType(ModuleDependency)
+        }
+
+        @Override
+        Set<? extends DependencyConstraint> getDependencyConstraints() {
+            return getRuntimeDependencies().withType(DependencyConstraint)
+        }
+
+        private DependencySet getRuntimeDependencies() {
             if (dependencies == null) {
                 def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
                 dependencies = configurations.findByName(runtimeElements).allDependencies
             }
-            return dependencies.withType(ModuleDependency)
+            return dependencies
         }
     }
 
