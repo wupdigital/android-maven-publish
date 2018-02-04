@@ -111,8 +111,8 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
     private static abstract class BaseUsage implements UsageContext {
         protected final ConfigurationContainer configurations
-        protected final PublishConfiguration publishConfiguration;
-        private final Usage usage;
+        protected final PublishConfiguration publishConfiguration
+        private final Usage usage
         private final ImmutableAttributes attributes
 
         BaseUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
