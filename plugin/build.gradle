@@ -5,7 +5,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.3'
     id 'com.gradle.plugin-publish' version '0.9.7'
-    id 'org.ajoberstar.github-pages' version '1.7.2'
+    id 'org.ajoberstar.git-publish' version '0.3.2'
 }
 
 test {
@@ -191,18 +191,13 @@ publishPlugins.enabled = isRelease()
 
 def javaDocFolder = isRelease() ? project.version : 'snapshots'
 
-githubPages() {
+gitPublish {
     repoUri = "https://${SCM_URL}.git"
-    targetBranch = 'gh-pages'
+    branch = 'gh-pages'
 
-    pages {
+    contents {
         from groovydoc.getDestinationDir()
         into "groovydoc${File.separator}${javaDocFolder}"
-    }
-
-    credentials {
-        username = System.getenv('GH_TOKEN')
-        password = ''
     }
 
     commitMessage = "Publish groovydoc for ${project.version} version"
