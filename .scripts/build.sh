@@ -7,5 +7,5 @@ if [ "$TRAVIS_REPO_SLUG" == "wupdigital/android-maven-publish" ] && [ "$TRAVIS_P
 	# Publish the artifacts
 	./gradlew publish publishPlugins -Dgradle.publish.key=$GRADLE_KEY -Dgradle.publish.secret=$GRADLE_SECRET || exit 1
 	# Push the groovydoc
-	./gradlew publishGhPages || exit 1
+	./gradlew gitPublishPush || exit 1
 fi
