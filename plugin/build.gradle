@@ -189,15 +189,13 @@ pluginBundle {
 
 publishPlugins.enabled = isRelease()
 
-def javaDocFolder = isRelease() ? project.version : 'snapshots'
-
 gitPublish {
     repoUri = "https://${SCM_URL}.git".toString()
     branch = 'gh-pages'
 
     contents {
         from groovydoc.getDestinationDir()
-        into "groovydoc${File.separator}${javaDocFolder}"
+        into "groovydoc${File.separator}${project.version}"
     }
 
     commitMessage = "Publish groovydoc for ${project.version} version".toString()
