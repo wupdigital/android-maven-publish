@@ -12,8 +12,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
 
     AndroidVariantLibrary component
     ObjectFactory objectFactory =  new DefaultObjectFactory(DirectInstantiator.INSTANCE, NamedObjectInstantiator.INSTANCE);
-    Usage runtime;
-    Usage compile;
+    Usage runtime
+    Usage compile
 
     def 'setup'() {
         File srcFolder = new File(root, "src${File.separator}main")

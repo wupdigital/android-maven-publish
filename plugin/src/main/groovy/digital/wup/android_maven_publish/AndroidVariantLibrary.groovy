@@ -34,7 +34,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
     private final Set<UsageContext> _usages
     private final PublishConfiguration publishConfiguration
-    private final ImmutableAttributesFactory attributesFactory;
+    private final ImmutableAttributesFactory attributesFactory
 
     AndroidVariantLibrary(ObjectFactory objectFactory, ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration) {
         this.publishConfiguration = publishConfiguration

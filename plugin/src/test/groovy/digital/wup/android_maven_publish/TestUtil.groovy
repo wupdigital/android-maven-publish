@@ -34,6 +34,6 @@ class TestUtil {
                 .withName(name)
                 .withParent(parent)
                 .withProjectDir(projectDir)
-                .build();
+                .build()
     }
 }
