@@ -39,8 +39,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 26
-            buildToolsVersion '26.0.2'
+            compileSdkVersion 27
+            buildToolsVersion '27.0.3'
         }
         project.dependencies {
             compile 'com.google.code.gson:gson:2.8.1'
@@ -59,8 +59,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 26
-            buildToolsVersion '26.0.2'
+            compileSdkVersion 27
+            buildToolsVersion '27.0.3'
         }
         project.dependencies {
             api 'com.google.code.gson:gson:2.8.1'
@@ -80,8 +80,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 26
-            buildToolsVersion '26.0.2'
+            compileSdkVersion 27
+            buildToolsVersion '27.0.3'
         }
         project.dependencies {
             implementation 'com.google.code.gson:gson:2.8.1'
@@ -102,8 +102,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
         }
         project.android {
             defaultPublishConfig 'debug'
-            compileSdkVersion 26
-            buildToolsVersion '26.0.2'
+            compileSdkVersion 27
+            buildToolsVersion '27.0.3'
         }
         project.dependencies {
             releaseCompile 'com.google.code.gson:gson:2.8.1'
@@ -118,8 +118,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
     def 'get default artifacts'() {
         when:
         project.android {
-            compileSdkVersion 26
-            buildToolsVersion '26.0.2'
+            compileSdkVersion 27
+            buildToolsVersion '27.0.3'
         }
         project.evaluate()
         then:
@@ -130,8 +130,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
     def 'android library components added by build variant'() {
         when:
         project.android {
-            compileSdkVersion 26
-            buildToolsVersion '26.0.2'
+            compileSdkVersion 27
+            buildToolsVersion '27.0.3'
             defaultPublishConfig 'prodRelease'
 
             flavorDimensions "color"
@@ -155,8 +155,8 @@ class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
     def 'test variant dependencies'() {
         when:
         project.android {
-            compileSdkVersion 26
-            buildToolsVersion '26.0.2'
+            compileSdkVersion 27
+            buildToolsVersion '27.0.3'
             defaultPublishConfig 'prodRelease'
 
             flavorDimensions "color"
