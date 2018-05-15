@@ -5,7 +5,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.3'
     id 'com.gradle.plugin-publish' version '0.9.7'
-    id 'org.ajoberstar.git-publish' version '0.3.2'
+    id 'org.ajoberstar.git-publish' version '0.4.1'
 }
 
 test {
@@ -192,7 +192,7 @@ publishPlugins.enabled = isRelease()
 def javaDocFolder = isRelease() ? project.version : 'snapshots'
 
 gitPublish {
-    repoUri = "https://${SCM_URL}.git"
+    repoUri = "https://${SCM_URL}.git".toString()
     branch = 'gh-pages'
 
     contents {
@@ -200,5 +200,5 @@ gitPublish {
         into "groovydoc${File.separator}${javaDocFolder}"
     }
 
-    commitMessage = "Publish groovydoc for ${project.version} version"
+    commitMessage = "Publish groovydoc for ${project.version} version".toString()
 }
