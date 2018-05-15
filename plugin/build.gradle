@@ -3,7 +3,7 @@ plugins {
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.6.3'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.7.3'
+    id 'com.jfrog.bintray' version '1.8.0'
     id 'com.gradle.plugin-publish' version '0.9.7'
     id 'org.ajoberstar.git-publish' version '0.4.1'
 }
@@ -140,7 +140,7 @@ if (isRelease()) {
             githubRepo = 'wupdigital/android-maven-publish'
             githubReleaseNotesFile = 'CHANGELOG.md'
 
-            publish = false
+            publish = true
 
             version {
                 name = project.version
