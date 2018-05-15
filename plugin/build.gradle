@@ -160,11 +160,8 @@ if (isRelease()) {
             }
         }
     }
-
-    publish.dependsOn([bintrayUpload])
-    bintrayUpload.dependsOn(['generatePomFileForMavenPublication',
-                             sourcesJar,
-                             groovydocJar])
+    publish.dependsOn bintrayUpload
+    bintrayUpload.dependsOn 'generatePomFileForMavenPublication', sourcesJar, groovydocJar
 }
 
 pluginBundle {
