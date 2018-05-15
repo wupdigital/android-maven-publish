@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.jacoco:org.jacoco.core:0.7.9'
+        classpath 'org.jacoco:org.jacoco.core:0.8.0'
     }
 }
 
