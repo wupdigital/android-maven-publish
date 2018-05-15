@@ -202,3 +202,5 @@ gitPublish {
 
     commitMessage = "Publish groovydoc for ${project.version} version".toString()
 }
+
+gitPublishPush.enabled = isRelease()
