@@ -47,7 +47,7 @@ task groovydocJar(type: Jar, dependsOn: groovydoc) {
     from groovydoc.getDestinationDir()
 }
 
-def isRelease() {
+Boolean isRelease() {
     !project.version.endsWith('-SNAPSHOT')
 }
 
@@ -197,6 +197,8 @@ gitPublish {
         from groovydoc.getDestinationDir()
         into "groovydoc${File.separator}${project.version}"
     }
+
+    preserve { include '**/*' }
 
     commitMessage = "Publish groovydoc for ${project.version} version".toString()
 }
