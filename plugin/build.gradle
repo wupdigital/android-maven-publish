@@ -1,7 +1,5 @@
 plugins {
     id 'groovy'
-    id 'jacoco'
-    id 'com.github.kt3k.coveralls' version '2.8.2'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.8.0'
     id 'com.gradle.plugin-publish' version '0.9.10'
@@ -10,27 +8,11 @@ plugins {
 }
 
 apply from: '../gradle/shared.gradle'
+apply from: '../gradle/testReportgradle'
 
 repositories {
     google()
     jcenter()
-}
-
-test {
-    testLogging {
-        events 'passed', 'skipped', 'failed'
-        showStandardStreams = true
-        showExceptions true
-        exceptionFormat 'full'
-        showCauses true
-        showStackTraces true
-    }
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-    }
 }
 
 dependencies {

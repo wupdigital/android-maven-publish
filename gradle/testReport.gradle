@@ -1,0 +1,19 @@
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls:2.8.2'
+
+test {
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+        showExceptions true
+        exceptionFormat 'full'
+        showCauses true
+        showStackTraces true
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
+}
