@@ -24,7 +24,7 @@ abstract class AbstractProjectBuilderSpec extends Specification {
     protected File root
 
     protected ProjectInternal project
-    private static int testFolderId = 0;
+    private static int testFolderId = 0
 
     def setup() {
         root = new File("build/tmp/test-app${testFolderId++}")
@@ -38,9 +38,9 @@ abstract class AbstractProjectBuilderSpec extends Specification {
         if (files != null) { //some JVMs return null for empty dirs
             for (File f : files) {
                 if (f.isDirectory()) {
-                    cleanFolder(f);
+                    cleanFolder(f)
                 } else {
-                    f.delete();
+                    f.delete()
                 }
             }
         }
