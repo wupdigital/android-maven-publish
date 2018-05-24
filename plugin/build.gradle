@@ -6,6 +6,14 @@ plugins {
     id 'com.jfrog.bintray' version '1.8.0'
     id 'com.gradle.plugin-publish' version '0.9.10'
     id 'org.ajoberstar.git-publish' version '0.4.1'
+    id 'idea'
+}
+
+apply from: '../gradle/shared.gradle'
+
+repositories {
+    google()
+    jcenter()
 }
 
 test {
@@ -28,8 +36,8 @@ jacocoTestReport {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compileOnly 'com.android.tools.build:gradle:3.1.2'
-    testCompile 'com.android.tools.build:gradle:3.1.2'
+    compileOnly "com.android.tools.build:gradle:$build_tools_version"
+    testCompile "com.android.tools.build:gradle:$build_tools_version"
     testCompile gradleTestKit()
     testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
@@ -139,8 +147,6 @@ if (isRelease()) {
 
             githubRepo = 'wupdigital/android-maven-publish'
             githubReleaseNotesFile = 'CHANGELOG.md'
-
-            publish = true
 
             version {
                 name = project.version

@@ -1,0 +1,3 @@
+rootProject.name = 'android-maven-publish-sample'
+// Test plugin without publish plugin to maven central
+includeBuild '../plugin'
