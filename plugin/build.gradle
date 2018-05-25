@@ -5,10 +5,12 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.9.10'
     id 'org.ajoberstar.git-publish' version '0.4.1'
     id 'idea'
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.8.2'
 }
 
 apply from: '../gradle/shared.gradle'
-apply from: '../gradle/testReportgradle'
+apply from: '../gradle/testReport.gradle'
 
 repositories {
     google()
