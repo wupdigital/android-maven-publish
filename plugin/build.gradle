@@ -10,6 +10,7 @@ plugins {
 }
 
 apply from: '../gradle/shared.gradle'
+apply from: '../gradle/integTest.gradle'
 apply from: '../gradle/testReport.gradle'
 
 repositories {
@@ -21,12 +22,12 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
     compileOnly "com.android.tools.build:gradle:$build_tools_version"
-    testCompile "com.android.tools.build:gradle:$build_tools_version"
-    testCompile gradleTestKit()
-    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+    testCompile 'junit:junit:4.12'
+    integTestCompile "com.android.tools.build:gradle:$build_tools_version"
+    integTestCompile gradleTestKit()
+    integTestCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
-    testCompile 'junit:junit:4.12'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
