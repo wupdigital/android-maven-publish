@@ -82,7 +82,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         Set<? extends DependencyConstraint> getDependencyConstraints() {
             if (dependencyConstraints == null) {
                 def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                dependencyConstraints = configurations.getByName(apiElements).getIncoming().getDependencyConstraints().withType(DependencyConstraint)
+                dependencyConstraints = configurations.getByName(apiElements).getIncoming().getDependencies().withType(DependencyConstraint)
             }
             return dependencyConstraints
         }
@@ -115,7 +115,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         Set<? extends DependencyConstraint> getDependencyConstraints() {
             if (dependencyConstraints == null) {
                 def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                dependencyConstraints = configurations.getByName(runtimeElements).getIncoming().getDependencyConstraints().withType(DependencyConstraint)
+                dependencyConstraints = configurations.getByName(runtimeElements).getIncoming().getDependencies().withType(DependencyConstraint)
             }
             return dependencyConstraints
         }
