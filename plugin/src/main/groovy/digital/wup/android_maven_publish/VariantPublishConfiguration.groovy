@@ -18,7 +18,6 @@ package digital.wup.android_maven_publish
 
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.BaseVariantOutput
-import org.gradle.api.Project
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -27,11 +26,9 @@ import org.gradle.api.tasks.bundling.Zip
 class VariantPublishConfiguration implements PublishConfiguration {
 
     private final Map<String, PublishArtifact> artifacts = new HashMap<>()
-    private final Project project
     private final BaseVariant variant
 
-    VariantPublishConfiguration(Project project, BaseVariant variant) {
-        this.project = project
+    VariantPublishConfiguration(BaseVariant variant) {
         this.variant = variant
     }
 
@@ -47,7 +44,7 @@ class VariantPublishConfiguration implements PublishConfiguration {
 
     @Override
     Set<PublishArtifact> getArtifacts() {
-        def artifacts = variant.outputs.collect { o ->
+        def artifacts = variant.outputs.collect { BaseVariantOutput o ->
             return cachedArtifact(o)
         }.toSet()
 

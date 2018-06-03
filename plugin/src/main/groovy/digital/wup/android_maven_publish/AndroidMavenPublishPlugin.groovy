@@ -48,7 +48,7 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
             def configurations = project.configurations
 
             android.libraryVariants.all { v ->
-                def publishConfig = new VariantPublishConfiguration(project, v)
+                def publishConfig = new VariantPublishConfiguration(v)
                 project.components.add(new AndroidVariantLibrary(objectFactory, configurations, attributesFactory, publishConfig))
             }
 
