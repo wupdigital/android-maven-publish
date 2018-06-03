@@ -25,14 +25,27 @@ android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
 
-    versionName = project.version
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName project.version
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled true // Enables code shrinking for the release build type.
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
 publishing {
     publications {
 
         // Publish the release aar artifact
-        defalultAar(MavenPublication) {
+        defaultAar(MavenPublication) {
             from components.android
             groupId 'digital.wup.android-maven-publish'
         }
@@ -44,7 +57,7 @@ publishing {
                 // Gets android component for build variant
                 from components.getByName("android${variant.name.capitalize()}")
                 groupId 'digital.wup.android-maven-publish'
-                artifactId "project.name - ${variant.name}"
+                artifactId "project.name-${variant.name}"
             }
         }
     }

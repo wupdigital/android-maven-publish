@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build sample project
-./gradlew build publishToMavenLocal -c sample/settings.gradle
+./gradlew build publishToMavenLocal -c sample/settings.gradle || exit 1
 # Build plugin and publish test coverage
 ./gradlew build jacocoTestReport coveralls -c plugin/settings.gradle || exit 1
 
