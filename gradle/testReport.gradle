@@ -24,4 +24,9 @@ jacocoTestReport {
     reports {
         xml.enabled = true
     }
+
+    executionData integrationTest
+
+    mustRunAfter 'test'
+    mustRunAfter 'integrationTest'
 }
