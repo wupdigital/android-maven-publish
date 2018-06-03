@@ -18,7 +18,6 @@ package digital.wup.android_maven_publish
 
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencyConstraint
-import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
@@ -43,11 +42,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         final UsageContext compileUsage = new CompileUsage(configurations, attributesFactory, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_API))
         final UsageContext runtimeUsage = new RuntimeUsage(configurations, attributesFactory, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_RUNTIME))
 
-        def usages = [compileUsage]
-        if (configurations.findByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME)) {
-            usages += runtimeUsage
-        }
-        _usages = Collections.unmodifiableSet(usages.toSet())
+        _usages = Collections.unmodifiableSet([runtimeUsage, compileUsage].toSet())
     }
 
     @Override
@@ -62,7 +57,8 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
     private static class CompileUsage extends BaseUsage {
 
-        private DependencySet dependencies
+        private def dependencies
+        private def dependencyConstraints
 
         CompileUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
             super(configurations, attributesFactory, publishConfiguration, usage)
@@ -75,30 +71,27 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         @Override
         Set<ModuleDependency> getDependencies() {
-            return getApiDependencies().withType(ModuleDependency)
+            if (dependencies == null) {
+                def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                dependencies = configurations.getByName(apiElements).getIncoming().getDependencies().withType(ModuleDependency)
+            }
+            return dependencies
         }
 
         @Override
         Set<? extends DependencyConstraint> getDependencyConstraints() {
-            return getApiDependencies().withType(DependencyConstraint)
-        }
-
-        private DependencySet getApiDependencies() {
-            if (dependencies == null) {
+            if (dependencyConstraints == null) {
                 def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                if (configurations.findByName(apiElements)) {
-                    dependencies = configurations.findByName(apiElements).allDependencies
-                } else {
-                    dependencies = configurations.findByName('default').allDependencies
-                }
+                dependencyConstraints = configurations.getByName(apiElements).getIncoming().getDependencyConstraints().withType(DependencyConstraint)
             }
-            return dependencies
+            return dependencyConstraints
         }
     }
 
     private static class RuntimeUsage extends BaseUsage {
 
-        private DependencySet dependencies
+        private def dependencies
+        private def dependencyConstraints
 
         RuntimeUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
             super(configurations, attributesFactory, publishConfiguration, usage)
@@ -111,20 +104,20 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         @Override
         Set<ModuleDependency> getDependencies() {
-            return getRuntimeDependencies().withType(ModuleDependency)
+            if (dependencies == null) {
+                def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                dependencies = configurations.getByName(runtimeElements).getIncoming().getDependencies().withType(ModuleDependency)
+            }
+            return dependencies
         }
 
         @Override
         Set<? extends DependencyConstraint> getDependencyConstraints() {
-            return getRuntimeDependencies().withType(DependencyConstraint)
-        }
-
-        private DependencySet getRuntimeDependencies() {
-            if (dependencies == null) {
+            if (dependencyConstraints == null) {
                 def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                dependencies = configurations.findByName(runtimeElements).allDependencies
+                dependencyConstraints = configurations.getByName(runtimeElements).getIncoming().getDependencyConstraints().withType(DependencyConstraint)
             }
-            return dependencies
+            return dependencyConstraints
         }
     }
 
