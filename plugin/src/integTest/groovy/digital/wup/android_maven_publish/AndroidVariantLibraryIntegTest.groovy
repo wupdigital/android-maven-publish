@@ -6,30 +6,20 @@ import org.gradle.api.internal.model.DefaultObjectFactory
 import org.gradle.api.internal.model.NamedObjectInstantiator
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.reflect.DirectInstantiator
-import org.gradle.util.TextUtil
 
-class AndroidVariantLibraryTest extends AbstractProjectBuilderSpec {
+class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
 
     AndroidVariantLibrary component
-    ObjectFactory objectFactory =  new DefaultObjectFactory(DirectInstantiator.INSTANCE, NamedObjectInstantiator.INSTANCE);
+    ObjectFactory objectFactory =  new DefaultObjectFactory(DirectInstantiator.INSTANCE, NamedObjectInstantiator.INSTANCE)
     Usage runtime
     Usage compile
 
     def 'setup'() {
-        File srcFolder = new File(root, "src${File.separator}main")
-        srcFolder.mkdirs()
-        File manifest = new File(srcFolder, 'AndroidManifest.xml')
-        manifest.createNewFile()
-        PrintWriter writer = new PrintWriter(manifest, 'UTF-8')
-        writer.print(TextUtil.toPlatformLineSeparators("""<manifest
-            package="digital.wup.testmavenpublish">
-            </manifest>"""))
-        writer.close()
         project.plugins.apply 'com.android.library'
         project.plugins.apply(AndroidMavenPublishPlugin)
         component = project.components.android
-        runtime = objectFactory.named(Usage.class, Usage.JAVA_RUNTIME);
-        compile = objectFactory.named(Usage.class, Usage.JAVA_API);
+        runtime = objectFactory.named(Usage.class, Usage.JAVA_RUNTIME)
+        compile = objectFactory.named(Usage.class, Usage.JAVA_API)
 
     }
 

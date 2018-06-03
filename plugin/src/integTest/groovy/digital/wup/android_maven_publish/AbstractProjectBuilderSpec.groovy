@@ -17,6 +17,7 @@
 package digital.wup.android_maven_publish
 
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.util.TextUtil
 import spock.lang.Specification
 
 abstract class AbstractProjectBuilderSpec extends Specification {
@@ -26,15 +27,35 @@ abstract class AbstractProjectBuilderSpec extends Specification {
     protected ProjectInternal project
     private static int testFolderId = 0
 
-    def setup() {
+    def 'setup'() {
         root = new File("build/tmp/test-app${testFolderId++}")
         root.mkdirs()
         cleanFolder(root)
         project = TestUtil.createRootProject(root)
+
+        def srcFolder = createMainSourceSetFolder(root)
+        createAndroidManifest(srcFolder, 'digital.wup.android_maven_publish.integ_test')
+
+    }
+
+    static File createMainSourceSetFolder(File target) {
+        File srcFolder = new File(target, "src${File.separator}main")
+        srcFolder.mkdirs()
+        return srcFolder
+    }
+
+    static void createAndroidManifest(File target, String packageName) {
+        File manifest = new File(target, 'AndroidManifest.xml')
+        manifest.createNewFile()
+        PrintWriter writer = new PrintWriter(manifest, 'UTF-8')
+        writer.print(TextUtil.toPlatformLineSeparators("""<manifest
+            package="$packageName">
+            </manifest>"""))
+        writer.close()
     }
 
     static void cleanFolder(File folder) {
-        File[] files = folder.listFiles();
+        File[] files = folder.listFiles()
         if (files != null) { //some JVMs return null for empty dirs
             for (File f : files) {
                 if (f.isDirectory()) {
