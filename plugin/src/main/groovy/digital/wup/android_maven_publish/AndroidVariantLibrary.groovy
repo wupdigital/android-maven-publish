@@ -16,6 +16,7 @@
 
 package digital.wup.android_maven_publish
 
+import com.google.common.collect.ImmutableSet
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencyConstraint
 import org.gradle.api.artifacts.ModuleDependency
@@ -29,6 +30,9 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaPlugin
 
+/**
+ * A SoftwareComponent representing a library that runs on android
+ */
 final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
     private final Set<UsageContext> _usages
@@ -42,7 +46,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         final UsageContext compileUsage = new CompileUsage(configurations, attributesFactory, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_API))
         final UsageContext runtimeUsage = new RuntimeUsage(configurations, attributesFactory, publishConfiguration, objectFactory.named(Usage.class, Usage.JAVA_RUNTIME))
 
-        _usages = Collections.unmodifiableSet([runtimeUsage, compileUsage].toSet())
+        _usages = ImmutableSet.of(runtimeUsage, compileUsage)
     }
 
     @Override
