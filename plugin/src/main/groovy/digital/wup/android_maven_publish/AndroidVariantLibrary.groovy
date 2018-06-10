@@ -21,6 +21,7 @@ import com.google.common.collect.Sets
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencyConstraint
+import org.gradle.api.artifacts.ExcludeRule
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
@@ -68,6 +69,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         private def dependencies
         private def dependencyConstraints
         private def capabilities
+        private def excludeRules
 
         CompileUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
             super(configurations, attributesFactory, publishConfiguration, usage)
@@ -91,16 +93,8 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         Set<? extends DependencyConstraint> getDependencyConstraints() {
             if (dependencyConstraints == null) {
                 def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
-
                 def incoming = configurations.getByName(apiElements).getIncoming()
-
-                if (incoming.metaClass.respondsTo(incoming, 'getDependencyConstraints')) {
-                    // Gradle 4.6
-                    dependencyConstraints = incoming.getDependencyConstraints()
-                } else {
-                    // Gradle 4.5
-                    dependencyConstraints = incoming.getDependencies().withType(DependencyConstraint)
-                }
+                dependencyConstraints = incoming.getDependencyConstraints()
             }
             return dependencyConstraints
         }
@@ -115,6 +109,15 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
             }
             return capabilities
         }
+
+        @Override
+        Set<ExcludeRule> getGlobalExcludes() {
+            if (excludeRules == null) {
+                def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                excludeRules = ImmutableSet.copyOf(configurations.getByName(apiElements).getExcludeRules())
+            }
+            return excludeRules
+        }
     }
 
     private static class RuntimeUsage extends BaseUsage {
@@ -122,6 +125,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         private def dependencies
         private def dependencyConstraints
         private def capabilities
+        private def excludeRules
 
         RuntimeUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
             super(configurations, attributesFactory, publishConfiguration, usage)
@@ -146,14 +150,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
             if (dependencyConstraints == null) {
                 def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
                 def incoming = configurations.getByName(runtimeElements).getIncoming()
-
-                if (incoming.metaClass.respondsTo(incoming, 'getDependencyConstraints')) {
-                    // Gradle 4.6+
-                    dependencyConstraints = incoming.getDependencyConstraints()
-                } else {
-                    // Gradle 4.5
-                    dependencyConstraints = incoming.getDependencies().withType(DependencyConstraint)
-                }
+                dependencyConstraints = incoming.getDependencyConstraints()
             }
             return dependencyConstraints
         }
@@ -167,6 +164,15 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
                         Sets.<Configuration> newHashSet())))
             }
             return capabilities
+        }
+
+        @Override
+        Set<ExcludeRule> getGlobalExcludes() {
+            if (excludeRules == null) {
+                def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                excludeRules = ImmutableSet.copyOf(configurations.getByName(runtimeElements).getExcludeRules())
+            }
+            return excludeRules
         }
     }
 
