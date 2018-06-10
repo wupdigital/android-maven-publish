@@ -17,12 +17,16 @@
 package digital.wup.android_maven_publish
 
 import com.google.common.collect.ImmutableSet
+import com.google.common.collect.Sets
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.DependencyConstraint
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
+import org.gradle.api.capabilities.Capability
+import org.gradle.api.internal.artifacts.configurations.Configurations
 import org.gradle.api.internal.attributes.ImmutableAttributes
 import org.gradle.api.internal.attributes.ImmutableAttributesFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -63,6 +67,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
         private def dependencies
         private def dependencyConstraints
+        private def capabilities
 
         CompileUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
             super(configurations, attributesFactory, publishConfiguration, usage)
@@ -91,7 +96,7 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
                 if (incoming.metaClass.respondsTo(incoming, 'getDependencyConstraints')) {
                     // Gradle 4.6
-                    dependencyConstraints = incoming.getDependencyConstraints().withType(DependencyConstraint)
+                    dependencyConstraints = incoming.getDependencyConstraints()
                 } else {
                     // Gradle 4.5
                     dependencyConstraints = incoming.getDependencies().withType(DependencyConstraint)
@@ -99,12 +104,24 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
             }
             return dependencyConstraints
         }
+
+        @Override
+        Set<? extends Capability> getCapabilities() {
+            if (capabilities == null) {
+                def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                this.capabilities = ImmutableSet.copyOf(Configurations.collectCapabilities(configurations.getByName(apiElements,
+                        Sets.<Capability> newHashSet(),
+                        Sets.<Configuration> newHashSet())))
+            }
+            return capabilities
+        }
     }
 
     private static class RuntimeUsage extends BaseUsage {
 
         private def dependencies
         private def dependencyConstraints
+        private def capabilities
 
         RuntimeUsage(ConfigurationContainer configurations, ImmutableAttributesFactory attributesFactory, PublishConfiguration publishConfiguration, Usage usage) {
             super(configurations, attributesFactory, publishConfiguration, usage)
@@ -132,13 +149,24 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
 
                 if (incoming.metaClass.respondsTo(incoming, 'getDependencyConstraints')) {
                     // Gradle 4.6+
-                    dependencyConstraints = incoming.getDependencyConstraints().withType(DependencyConstraint)
+                    dependencyConstraints = incoming.getDependencyConstraints()
                 } else {
                     // Gradle 4.5
                     dependencyConstraints = incoming.getDependencies().withType(DependencyConstraint)
                 }
             }
             return dependencyConstraints
+        }
+
+        @Override
+        Set<? extends Capability> getCapabilities() {
+            if (capabilities == null) {
+                def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
+                this.capabilities = ImmutableSet.copyOf(Configurations.collectCapabilities(configurations.getByName(runtimeElements,
+                        Sets.<Capability> newHashSet(),
+                        Sets.<Configuration> newHashSet())))
+            }
+            return capabilities
         }
     }
 

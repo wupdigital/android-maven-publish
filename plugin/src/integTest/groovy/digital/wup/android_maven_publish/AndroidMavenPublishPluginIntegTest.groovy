@@ -113,7 +113,7 @@ class AndroidMavenPublishPluginIntegTest extends AbstractProjectBuilderSpec {
 
     private static final DomainObjectSet<DependencyConstraint> getDependencyConstraints(Configuration configuration) {
         if (configuration.hasProperty('allDependencyConstraints')) {
-            return configuration.allDependencyConstraints.withType(DependencyConstraint)
+            return configuration.allDependencyConstraints
         }
         return configuration.allDependencies.withType(DependencyConstraint)
     }
