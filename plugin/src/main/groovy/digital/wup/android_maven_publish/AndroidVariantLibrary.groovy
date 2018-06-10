@@ -86,7 +86,16 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         Set<? extends DependencyConstraint> getDependencyConstraints() {
             if (dependencyConstraints == null) {
                 def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                dependencyConstraints = configurations.getByName(apiElements).getIncoming().getDependencies().withType(DependencyConstraint)
+
+                def incoming = configurations.getByName(apiElements).getIncoming()
+
+                if (incoming.metaClass.respondsTo(incoming, 'getDependencyConstraints')) {
+                    // Gradle 4.6
+                    dependencyConstraints = incoming.getDependencyConstraints().withType(DependencyConstraint)
+                } else {
+                    // Gradle 4.5
+                    dependencyConstraints = incoming.getDependencies().withType(DependencyConstraint)
+                }
             }
             return dependencyConstraints
         }
@@ -119,7 +128,15 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         Set<? extends DependencyConstraint> getDependencyConstraints() {
             if (dependencyConstraints == null) {
                 def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                dependencyConstraints = configurations.getByName(runtimeElements).getIncoming().getDependencies().withType(DependencyConstraint)
+                def incoming = configurations.getByName(runtimeElements).getIncoming()
+
+                if (incoming.metaClass.respondsTo(incoming, 'getDependencyConstraints')) {
+                    // Gradle 4.6+
+                    dependencyConstraints = incoming.getDependencyConstraints().withType(DependencyConstraint)
+                } else {
+                    // Gradle 4.5
+                    dependencyConstraints = incoming.getDependencies().withType(DependencyConstraint)
+                }
             }
             return dependencyConstraints
         }

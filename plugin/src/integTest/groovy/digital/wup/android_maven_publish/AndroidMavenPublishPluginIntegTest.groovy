@@ -16,6 +16,8 @@
 
 package digital.wup.android_maven_publish
 
+import org.gradle.api.DomainObjectSet
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.DependencyConstraint
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -61,13 +63,13 @@ class AndroidMavenPublishPluginIntegTest extends AbstractProjectBuilderSpec {
         runtimeUsage.dependencies.size() == 2
         runtimeUsage.dependencies == project.configurations.getByName(RELEASE_RUNTIME_CLASSPATH_CONFIGURATION_NAME).allDependencies.withType(ModuleDependency)
         runtimeUsage.dependencyConstraints.size() == 2
-        runtimeUsage.dependencyConstraints == project.configurations.getByName(RELEASE_RUNTIME_CLASSPATH_CONFIGURATION_NAME).allDependencies.withType(DependencyConstraint)
+        runtimeUsage.dependencyConstraints == getDependencyConstraints(project.configurations.getByName(RELEASE_RUNTIME_CLASSPATH_CONFIGURATION_NAME))
 
         apiUsage.artifacts.collect { it.archiveTask } == [archiveTask]
         apiUsage.dependencies.size() == 1
         apiUsage.dependencies == project.configurations.getByName(API_CONFIGURATION_NAME).allDependencies.withType(ModuleDependency)
         apiUsage.dependencyConstraints.size() == 1
-        apiUsage.dependencyConstraints == project.configurations.getByName(API_CONFIGURATION_NAME).allDependencies.withType(DependencyConstraint)
+        apiUsage.dependencyConstraints == getDependencyConstraints(project.configurations.getByName(API_CONFIGURATION_NAME))
     }
 
     def 'adds Android library component for debug build configuration'() {
@@ -94,18 +96,25 @@ class AndroidMavenPublishPluginIntegTest extends AbstractProjectBuilderSpec {
         runtimeUsage.dependencies.size() == 2
         runtimeUsage.dependencies == project.configurations.getByName(DEBUG_RUNTIME_CLASSPATH_CONFIGURATION_NAME).allDependencies.withType(ModuleDependency)
         runtimeUsage.dependencyConstraints.size() == 2
-        runtimeUsage.dependencyConstraints == project.configurations.getByName(DEBUG_RUNTIME_CLASSPATH_CONFIGURATION_NAME).allDependencies.withType(DependencyConstraint)
+        runtimeUsage.dependencyConstraints == getDependencyConstraints(project.configurations.getByName(DEBUG_RUNTIME_CLASSPATH_CONFIGURATION_NAME))
 
         apiUsage.artifacts.collect { it.archiveTask } == [archiveTask]
         apiUsage.dependencies.size() == 1
         apiUsage.dependencies == project.configurations.getByName(API_CONFIGURATION_NAME).allDependencies.withType(ModuleDependency)
         apiUsage.dependencyConstraints.size() == 1
-        apiUsage.dependencyConstraints == project.configurations.getByName(API_CONFIGURATION_NAME).allDependencies.withType(DependencyConstraint)
+        apiUsage.dependencyConstraints == getDependencyConstraints(project.configurations.getByName(API_CONFIGURATION_NAME))
     }
 
-    private AbstractArchiveTask findArchiveTask(String buildType) {
+    private final AbstractArchiveTask findArchiveTask(String buildType) {
         return (AbstractArchiveTask) project.tasks.findByName("assemble${buildType.capitalize()}").dependsOn.find {
             (it instanceof Zip) && it.name.startsWith('bundle')
         }
+    }
+
+    private static final DomainObjectSet<DependencyConstraint> getDependencyConstraints(Configuration configuration) {
+        if (configuration.hasProperty('allDependencyConstraints')) {
+            return configuration.allDependencyConstraints.withType(DependencyConstraint)
+        }
+        return configuration.allDependencies.withType(DependencyConstraint)
     }
 }
