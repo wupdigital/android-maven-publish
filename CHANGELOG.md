@@ -1,9 +1,10 @@
 # Change Log
 
-## Version 3.4.0 (TBD) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.4.0/index.html)
+## Version 3.4.0 (2018-06-10) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.4.0/index.html)
 * Bump used plugin versions
 * Fix api doc publishing
 * Added a sample project
+* Supports Gradle 4.6
 
 ## Version 3.3.0 (2018-02-11) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.3.0/index.html)
 
