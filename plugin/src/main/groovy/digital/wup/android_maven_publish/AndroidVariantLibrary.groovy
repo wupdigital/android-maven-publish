@@ -103,9 +103,9 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         Set<? extends Capability> getCapabilities() {
             if (capabilities == null) {
                 def apiElements = publishConfiguration.publishConfig + JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                this.capabilities = ImmutableSet.copyOf(Configurations.collectCapabilities(configurations.getByName(apiElements,
+                this.capabilities = ImmutableSet.copyOf(Configurations.collectCapabilities(configurations.getByName(apiElements),
                         Sets.<Capability> newHashSet(),
-                        Sets.<Configuration> newHashSet())))
+                        Sets.<Configuration> newHashSet()))
             }
             return capabilities
         }
@@ -159,9 +159,9 @@ final class AndroidVariantLibrary implements SoftwareComponentInternal {
         Set<? extends Capability> getCapabilities() {
             if (capabilities == null) {
                 def runtimeElements = publishConfiguration.publishConfig + JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME.capitalize()
-                this.capabilities = ImmutableSet.copyOf(Configurations.collectCapabilities(configurations.getByName(runtimeElements,
+                this.capabilities = ImmutableSet.copyOf(Configurations.collectCapabilities(configurations.getByName(runtimeElements),
                         Sets.<Capability> newHashSet(),
-                        Sets.<Configuration> newHashSet())))
+                        Sets.<Configuration> newHashSet()))
             }
             return capabilities
         }
