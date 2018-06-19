@@ -71,8 +71,8 @@ If you want publish custom variants:
 | 3.2.0 | digital.wup:android-maven-publish:3.2.0 | 4.4         |
 | 3.3.0 | digital.wup:android-maven-publish:3.3.0 | 4.5         |
 | 3.4.0 | digital.wup:android-maven-publish:3.4.0 | 4.5 - 4.6   |
-| 3.5.1 | digital.wup:android-maven-publish:3.5.0 | 4.7         |
-| 3.6.1 | digital.wup:android-maven-publish:3.6.0 | 4.8 -       |
+| 3.5.1 | digital.wup:android-maven-publish:3.5.1 | 4.7         |
+| 3.6.1 | digital.wup:android-maven-publish:3.6.1 | 4.8 -       |
 
 ## License
 
