@@ -1,6 +1,9 @@
 # Change Log
 
-## Version 3.5.0 (2018-08-10) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.5.0/index.html)
+## Version 3.5.1 (2018-06-19) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.5.1/index.html)
+* Fix [#20](https://github.com/wupdigital/android-maven-publish/issues/20)
+
+## Version 3.5.0 (2018-06-10) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.5.0/index.html)
 * Supports Gradle 4.7
 
 ## Version 3.4.0 (2018-06-10) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.4.0/index.html)
