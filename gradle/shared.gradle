@@ -1,5 +1,5 @@
 project.group 'digital.wup'
-project.version '3.6.1'
+project.version '3.6.2-SNAPSHOT'
 
 ext {
     build_tools_version = '3.1.2'
