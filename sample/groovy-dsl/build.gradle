@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+apply plugin: 'digital.wup.android-maven-publish'
+
+repositories {
+    google()
+    jcenter()
+}
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName project.version
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled true // Enables code shrinking for the release build type.
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+publishing {
+    publications {
+
+        // Publish the release aar artifact
+        defaultAar(MavenPublication) {
+            from components.android
+            groupId 'digital.wup.android-maven-publish'
+        }
+
+        // Publish an aar file per build variant. In this case a debug and a release aar file.
+        android.libraryVariants.all { variant ->
+
+            "${variant.name.capitalize()}Aar"(MavenPublication) {
+                // Gets android component for build variant
+                from components.getByName("android${variant.name.capitalize()}")
+                groupId 'digital.wup.android-maven-publish'
+                artifactId "${project.name}-${variant.name}"
+            }
+        }
+    }
+}
