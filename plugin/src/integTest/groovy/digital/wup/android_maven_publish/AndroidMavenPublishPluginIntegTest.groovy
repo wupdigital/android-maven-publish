@@ -31,12 +31,22 @@ class AndroidMavenPublishPluginIntegTest extends AbstractProjectBuilderSpec {
     private static final DEBUG_RUNTIME_CLASSPATH_CONFIGURATION_NAME = 'releaseRuntimeElements'
 
 
-    def 'applies android-maven-publish plugin'() {
+    def 'Should add android component when android-maven-publish plugin has been applied after android plugin'() {
         when:
         project.plugins.apply 'com.android.library'
         project.plugins.apply(AndroidMavenPublishPlugin)
         then:
         project.plugins.findPlugin(AndroidMavenPublishPlugin)
+        project.components.getByName('android')
+    }
+
+    def 'Should add android component when android-maven-publish plugin has been applied before android plugin'() {
+        when:
+        project.plugins.apply(AndroidMavenPublishPlugin)
+        project.plugins.apply 'com.android.library'
+        then:
+        project.plugins.findPlugin(AndroidMavenPublishPlugin)
+        project.components.getByName('android')
     }
 
     def 'adds Android library component'() {
