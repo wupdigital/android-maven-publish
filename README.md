@@ -10,7 +10,7 @@ Modification of the standard Maven Publish plugin to be compatible with android-
 
 
     plugins {
-        id 'digital.wup.android-maven-publish' version '3.6.1'
+        id 'digital.wup.android-maven-publish' version '3.6.2'
     }
 
 -or-
@@ -20,7 +20,7 @@ Modification of the standard Maven Publish plugin to be compatible with android-
             jcenter()
         }
         dependencies {
-            classpath 'digital.wup:android-maven-publish:3.6.1'
+            classpath 'digital.wup:android-maven-publish:3.6.2'
         }
     }
 
@@ -72,7 +72,7 @@ If you want publish custom variants:
 | 3.3.0 | digital.wup:android-maven-publish:3.3.0 | 4.5         |
 | 3.4.0 | digital.wup:android-maven-publish:3.4.0 | 4.5 - 4.6   |
 | 3.5.1 | digital.wup:android-maven-publish:3.5.1 | 4.7         |
-| 3.6.1 | digital.wup:android-maven-publish:3.6.1 | 4.8 -       |
+| 3.6.2 | digital.wup:android-maven-publish:3.6.2 | 4.8 -       |
 
 ## License
 
