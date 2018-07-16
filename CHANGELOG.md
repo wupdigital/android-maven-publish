@@ -1,6 +1,9 @@
 # Change Log
 
-## Version 3.6.1 (2018-06-19) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.6.0/index.html)
+## Version 3.6.2 (2018-07-16) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.6.2/index.html)
+* Fix [#24](https://github.com/wupdigital/android-maven-publish/issues/24): Add android component after android library plugin has been applied
+
+## Version 3.6.1 (2018-06-19) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.6.1/index.html)
 * Fix [#20](https://github.com/wupdigital/android-maven-publish/issues/20)
 
 ## Version 3.6.0 (2018-06-11) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.6.0/index.html)
