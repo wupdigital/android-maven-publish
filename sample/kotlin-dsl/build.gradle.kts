@@ -32,7 +32,7 @@ publishing {
     (publications) {
 
         // Publish the release aar artifact
-        "defaultAar"(MavenPublication::class) {
+        register("defaultAar", MavenPublication::class) {
             from(components["android"])
             groupId = "digital.wup.android-maven-publish"
             version = "${project.version}"
