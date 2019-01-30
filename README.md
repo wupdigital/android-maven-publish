@@ -4,7 +4,7 @@
 
 # android-maven-publish
 
-Modification of the standard Maven Publish plugin to be compatible with android-library projects (aar).
+Modification of the standard Maven Publish plugin to be compatible with _android-library_ projects (_aar_).
 
 ## Applying the plugin
 
@@ -31,12 +31,12 @@ apply plugin: 'digital.wup.android-maven-publish'
 
 ## Documentation
 
-The android-maven-publish plugin provides a `SoftwareComponent` like `java` plugin (`components.java`).
-The android component is used to determine which aar files to publish, and which dependencies should be listed in the generated POM file.
+The _android-maven-publish_ plugin provides a `SoftwareComponent` similar to the `java` plugin (`components.java`).
+The `android` component is used to determine which _aar_ files are published and which dependencies should be listed in the generated _POM_ file.
 
 ### Usage
 
-Please refer to the standard Maven Publish plugin documentation: https://docs.gradle.org/current/userguide/publishing_maven.html
+Please refer to the standard [Maven Publish plugin documentation](https://docs.gradle.org/current/userguide/publishing_maven.html).
 
 ``` groovy
 publishing {
@@ -48,7 +48,7 @@ publishing {
 }
 ```
 
-If you want publish custom variants:
+If you want to publish custom variants:
 
 ``` groovy
 publishing {
