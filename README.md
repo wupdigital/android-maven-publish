@@ -8,24 +8,26 @@ Modification of the standard Maven Publish plugin to be compatible with android-
 
 ## Applying the plugin
 
-
-    plugins {
-        id 'digital.wup.android-maven-publish' version '3.6.2'
-    }
+``` groovy
+plugins {
+    id 'digital.wup.android-maven-publish' version '3.6.2'
+}
+```
 
 -or-
 
-    buildscript {
-        repositories {
-            jcenter()
-        }
-        dependencies {
-            classpath 'digital.wup:android-maven-publish:3.6.2'
-        }
+``` groovy
+buildscript {
+    repositories {
+        jcenter()
     }
+    dependencies {
+        classpath 'digital.wup:android-maven-publish:3.6.2'
+    }
+}
 
-    apply plugin: 'digital.wup.android-maven-publish'
-
+apply plugin: 'digital.wup.android-maven-publish'
+```
 
 ## Documentation
 
@@ -36,29 +38,33 @@ The android component is used to determine which aar files to publish, and which
 
 Please refer to the standard Maven Publish plugin documentation: https://docs.gradle.org/current/userguide/publishing_maven.html
 
-    publishing {
-        publications {
-            mavenAar(MavenPublication) {
-                from components.android
-            }
+``` groovy
+publishing {
+    publications {
+        mavenAar(MavenPublication) {
+            from components.android
         }
     }
+}
+```
 
 If you want publish custom variants:
 
-    publishing {
-        publications {
-            android.libraryVariants.all { variant ->
+``` groovy
+publishing {
+    publications {
+        android.libraryVariants.all { variant ->
 
-                "maven${variant.name.capitalize()}Aar"(MavenPublication) {
-                    from components.findByName("android${variant.name.capitalize()}")
-                    groupId 'digital.wup.test-publish'
-                    artifactId 'test-publish'
-                    version "1.0.0-${variant.name}"
-                }
+            "maven${variant.name.capitalize()}Aar"(MavenPublication) {
+                from components.findByName("android${variant.name.capitalize()}")
+                groupId 'digital.wup.test-publish'
+                artifactId 'test-publish'
+                version "1.0.0-${variant.name}"
             }
         }
     }
+}
+```
 
 ## Compatibility information
 
