@@ -36,7 +36,7 @@ The android component is used to determine which aar files to publish, and which
 
 ### Usage
 
-Please refer to the standard Maven Publish plugin documentation: https://docs.gradle.org/current/userguide/publishing_maven.html
+Please refer to the standard [Maven Publish plugin documentation](https://docs.gradle.org/current/userguide/publishing_maven.html).
 
 ``` groovy
 publishing {
