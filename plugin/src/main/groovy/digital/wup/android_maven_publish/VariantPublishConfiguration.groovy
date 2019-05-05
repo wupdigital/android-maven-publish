@@ -55,6 +55,10 @@ class VariantPublishConfiguration implements PublishConfiguration {
         PublishArtifact artifact = artifacts.get(o.baseName)
 
         if (!artifact) {
+            println this
+            println o.assemble?.name
+            println o.baseName + ": " + findArchiveTask(o)?.name
+
             artifact = new ArchivePublishArtifact(findArchiveTask(o))
                     .builtBy(o.assemble)
             artifacts.put(o.baseName, artifact)

@@ -16,7 +16,8 @@
 
 package digital.wup.android_maven_publish
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.api.BaseVariant
 import groovy.util.logging.Slf4j
 import org.gradle.api.Action
 import org.gradle.api.Plugin
@@ -50,14 +51,20 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
                 addSoftwareComponents(project)
             }
         })
+
+        project.pluginManager.withPlugin('com.android.application', new Action<AppliedPlugin>() {
+            @Override
+            void execute(AppliedPlugin appliedPlugin) {
+                addSoftwareComponents(project)
+            }
+        })
     }
 
     private void addSoftwareComponents(Project project) {
-        def android = project.extensions.getByType(LibraryExtension)
 
         def configurations = project.configurations
 
-        android.libraryVariants.all { v ->
+        variants(project).all { BaseVariant v ->
             def publishConfig = new VariantPublishConfiguration(v)
             project.components.add(new AndroidVariantLibrary(objectFactory, configurations, attributesFactory, publishConfig))
         }
@@ -65,5 +72,16 @@ class AndroidMavenPublishPlugin implements Plugin<Project> {
         // For default publish config
         def defaultPublishConfig = new DefaultPublishConfiguration(project)
         project.components.add(new AndroidVariantLibrary(objectFactory, configurations, attributesFactory, defaultPublishConfig))
+    }
+
+    private static variants(final Project project) {
+
+        def android = project.extensions.getByType(BaseExtension)
+        if (android.hasProperty('libraryVariants')) {
+            return android.libraryVariants
+        } else if (android.hasProperty('applicationVariants')) {
+            return android.applicationVariants
+        }
+        return null
     }
 }

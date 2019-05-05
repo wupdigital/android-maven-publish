@@ -1,0 +1,32 @@
+test {
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+        showExceptions true
+        exceptionFormat 'full'
+        showCauses true
+        showStackTraces true
+    }
+}
+
+integrationTest {
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+        showStandardStreams = true
+        showExceptions true
+        exceptionFormat 'full'
+        showCauses true
+        showStackTraces true
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
+
+    executionData integrationTest
+
+    mustRunAfter 'test'
+    mustRunAfter 'integrationTest'
+}

@@ -16,7 +16,7 @@
 
 package digital.wup.android_maven_publish
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.PublishArtifact
@@ -36,7 +36,7 @@ class DefaultPublishConfiguration implements PublishConfiguration {
 
     @Override
     String getPublishConfig() {
-        def android = project.extensions.getByType(LibraryExtension)
+        def android = project.extensions.getByType(BaseExtension)
         return android.defaultPublishConfig
     }
 

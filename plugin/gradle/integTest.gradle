@@ -1,0 +1,23 @@
+configurations {
+    integTestCompile.extendsFrom compile
+    integTestRuntime.extendsFrom runtime
+}
+
+sourceSets {
+    integrationTest {
+        groovy.srcDir file('src/integTest/groovy')
+        resources.srcDir file('src/integTest/resources')
+        compileClasspath += sourceSets.main.output + configurations.integTestCompile
+        runtimeClasspath += output + compileClasspath + configurations.integTestRuntime
+    }
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    mustRunAfter test
+}
+
+check.dependsOn integrationTest
