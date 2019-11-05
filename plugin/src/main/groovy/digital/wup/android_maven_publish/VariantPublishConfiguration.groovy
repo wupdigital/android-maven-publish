@@ -17,7 +17,7 @@
 package digital.wup.android_maven_publish
 
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.BaseVariantOutput
+import org.gradle.api.Task
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -44,26 +44,37 @@ class VariantPublishConfiguration implements PublishConfiguration {
 
     @Override
     Set<PublishArtifact> getArtifacts() {
-        def artifacts = variant.outputs.collect { BaseVariantOutput o ->
-            return cachedArtifact(o)
-        }.toSet()
+        def artifacts = Collections.singleton(cachedArtifact(variant))
 
         return Collections.unmodifiableSet(artifacts)
     }
 
-    private PublishArtifact cachedArtifact(BaseVariantOutput o) {
-        PublishArtifact artifact = artifacts.get(o.baseName)
+    private PublishArtifact cachedArtifact(BaseVariant variant) {
+        PublishArtifact artifact = artifacts.get(variant.baseName)
 
         if (!artifact) {
-            artifact = new ArchivePublishArtifact(findArchiveTask(o))
-                    .builtBy(o.assemble)
-            artifacts.put(o.baseName, artifact)
+
+            final assemble = findAssembleTask(variant)
+            final archiveTask = findArchiveTask(assemble)
+
+            artifact = new ArchivePublishArtifact(archiveTask)
+                    .builtBy(assemble)
+            artifacts.put(variant.baseName, artifact)
         }
         return artifact
     }
 
-    private static AbstractArchiveTask findArchiveTask(BaseVariantOutput o) {
-        return (AbstractArchiveTask) o.assemble.dependsOn.find {
+    private static Task findAssembleTask(BaseVariant variant) {
+        if (variant.metaClass.properties*.name.contains('assembleProvider')) {
+            return variant.assembleProvider.get()
+        } else {
+            //noinspection GrDeprecatedAPIUsage
+            return variant.assemble;
+        }
+    }
+
+    private static AbstractArchiveTask findArchiveTask(Task assemble) {
+        return (AbstractArchiveTask) assemble.dependsOn.find {
             (it instanceof Zip) && it.name.startsWith('bundle')
         }
     }

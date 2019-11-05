@@ -12,11 +12,11 @@ repositories {
 }
 
 android {
-    compileSdkVersion(27)
-    buildToolsVersion("27.0.3")
+    compileSdkVersion(28)
+    buildToolsVersion("28.0.3")
     defaultConfig {
         minSdkVersion(15)
-        targetSdkVersion(27)
+        targetSdkVersion(28)
         versionCode = 1
         versionName = "${project.version}"
     }
