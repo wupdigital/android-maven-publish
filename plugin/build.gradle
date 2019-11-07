@@ -144,7 +144,7 @@ if (isRelease()) {
                 }
 
                 mavenCentralSync {
-                    sync = true
+                    sync = false
                     user = System.getenv('OSS_USER')
                     password = System.getenv('OSS_PASSWORD')
                 }
