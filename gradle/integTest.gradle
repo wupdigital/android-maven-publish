@@ -1,5 +1,5 @@
 configurations {
-    integTestApi.extendsFrom api
+    integTestRuntimeOnly.extendsFrom runtimeOnly
     integTestImplementation.extendsFrom implementaion
 }
 
@@ -7,8 +7,8 @@ sourceSets {
     integrationTest {
         groovy.srcDir file('src/integTest/groovy')
         resources.srcDir file('src/integTest/resources')
-        compileClasspath += sourceSets.main.output + configurations.integTestApi
-        runtimeClasspath += output + compileClasspath + configurations.integTestImplementation
+        compileClasspath += sourceSets.main.output + configurations.integTestImplementation
+        runtimeClasspath += output + compileClasspath + configurations.integTestRuntimeOnly
     }
 }
 
