@@ -13,7 +13,7 @@ import javax.inject.Inject
 class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
 
     AndroidVariantLibrary component
-    ObjectFactory objectFactory =  new DefaultObjectFactory(DirectInstantiator.INSTANCE, NamedObjectInstantiator.INSTANCE)
+    ObjectFactory objectFactory
     Usage runtime
     Usage compile
 
@@ -21,6 +21,7 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
         project.plugins.apply 'com.android.library'
         project.plugins.apply(AndroidMavenPublishPlugin)
         component = project.components.android
+        objectFactory = project.getObjects()
         runtime = objectFactory.named(Usage.class, Usage.JAVA_RUNTIME)
         compile = objectFactory.named(Usage.class, Usage.JAVA_API)
 
