@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 3.6.3 (2019-11-07) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.6.3/index.html)
+* Replace VariantOutput.getAssemble call to Variant.getAssembleProvider, when it is available
+
 ## Version 3.6.2 (2018-07-16) [api doc](https://wupdigital.github.io/android-maven-publish/groovydoc/3.6.2/index.html)
 * Fix [#24](https://github.com/wupdigital/android-maven-publish/issues/24): Add android component after android library plugin has been applied
 
