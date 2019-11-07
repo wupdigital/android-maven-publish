@@ -53,7 +53,7 @@ class AndroidMavenPublishPluginIntegTest extends AbstractProjectBuilderSpec {
         given:
         project.plugins.apply 'com.android.library'
         project.pluginManager.apply(AndroidMavenPublishPlugin)
-        project.android.compileSdkVersion = 27
+        project.android.compileSdkVersion = 28
         project.dependencies.add(API_CONFIGURATION_NAME, 'org:api1:1.0')
         project.dependencies.constraints.add(API_CONFIGURATION_NAME, 'org:api2:2.0')
         project.dependencies.add(IMPLEMENTATION_CONFIGURATION_NAME, 'org:impl1:1.0')
@@ -86,7 +86,7 @@ class AndroidMavenPublishPluginIntegTest extends AbstractProjectBuilderSpec {
         given:
         project.plugins.apply 'com.android.library'
         project.pluginManager.apply(AndroidMavenPublishPlugin)
-        project.android.compileSdkVersion = 27
+        project.android.compileSdkVersion = 28
         project.dependencies.add(API_CONFIGURATION_NAME, 'org:api1:1.0')
         project.dependencies.constraints.add(API_CONFIGURATION_NAME, 'org:api2:2.0')
         project.dependencies.add(IMPLEMENTATION_CONFIGURATION_NAME, 'org:impl1:1.0')

@@ -2,10 +2,13 @@ package digital.wup.android_maven_publish
 
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.attributes.Usage
+import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.model.DefaultObjectFactory
 import org.gradle.api.internal.model.NamedObjectInstantiator
 import org.gradle.api.model.ObjectFactory
 import org.gradle.internal.reflect.DirectInstantiator
+
+import javax.inject.Inject
 
 class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
 
@@ -29,8 +32,8 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 27
-            buildToolsVersion '27.0.3'
+            compileSdkVersion 28
+            buildToolsVersion '28.0.3'
         }
         project.dependencies {
             compile 'com.google.code.gson:gson:2.8.1'
@@ -49,8 +52,8 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 27
-            buildToolsVersion '27.0.3'
+            compileSdkVersion 28
+            buildToolsVersion '28.0.3'
         }
         project.dependencies {
             api 'com.google.code.gson:gson:2.8.1'
@@ -70,8 +73,8 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
             jcenter()
         }
         project.android {
-            compileSdkVersion 27
-            buildToolsVersion '27.0.3'
+            compileSdkVersion 28
+            buildToolsVersion '28.0.3'
         }
         project.dependencies {
             implementation 'com.google.code.gson:gson:2.8.1'
@@ -92,8 +95,8 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
         }
         project.android {
             defaultPublishConfig 'debug'
-            compileSdkVersion 27
-            buildToolsVersion '27.0.3'
+            compileSdkVersion 28
+            buildToolsVersion '28.0.3'
         }
         project.dependencies {
             releaseCompile 'com.google.code.gson:gson:2.8.1'
@@ -108,8 +111,8 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
     def 'get default artifacts'() {
         when:
         project.android {
-            compileSdkVersion 27
-            buildToolsVersion '27.0.3'
+            compileSdkVersion 28
+            buildToolsVersion '28.0.3'
         }
         project.evaluate()
         then:
@@ -120,8 +123,8 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
     def 'android library components added by build variant'() {
         when:
         project.android {
-            compileSdkVersion 27
-            buildToolsVersion '27.0.3'
+            compileSdkVersion 28
+            buildToolsVersion '28.0.3'
             defaultPublishConfig 'prodRelease'
 
             flavorDimensions "color"
@@ -145,8 +148,8 @@ class AndroidVariantLibraryIntegTest extends AbstractProjectBuilderSpec {
     def 'test variant dependencies'() {
         when:
         project.android {
-            compileSdkVersion 27
-            buildToolsVersion '27.0.3'
+            compileSdkVersion 28
+            buildToolsVersion '28.0.3'
             defaultPublishConfig 'prodRelease'
 
             flavorDimensions "color"
