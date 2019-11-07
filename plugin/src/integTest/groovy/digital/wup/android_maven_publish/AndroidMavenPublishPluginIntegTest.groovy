@@ -63,19 +63,16 @@ class AndroidMavenPublishPluginIntegTest extends AbstractProjectBuilderSpec {
         project.evaluate()
 
         and:
-        def archiveTask = findArchiveTask('release')
         def androidLibrary = project.components.getByName('android')
         def runtimeUsage = androidLibrary.usages[0]
         def apiUsage = androidLibrary.usages[1]
 
         then:
-        runtimeUsage.artifacts.collect { it.archiveTask } == [archiveTask]
         runtimeUsage.dependencies.size() == 2
         runtimeUsage.dependencies == project.configurations.getByName(RELEASE_RUNTIME_CLASSPATH_CONFIGURATION_NAME).allDependencies.withType(ModuleDependency)
         runtimeUsage.dependencyConstraints.size() == 2
         runtimeUsage.dependencyConstraints == getDependencyConstraints(project.configurations.getByName(RELEASE_RUNTIME_CLASSPATH_CONFIGURATION_NAME))
 
-        apiUsage.artifacts.collect { it.archiveTask } == [archiveTask]
         apiUsage.dependencies.size() == 1
         apiUsage.dependencies == project.configurations.getByName(API_CONFIGURATION_NAME).allDependencies.withType(ModuleDependency)
         apiUsage.dependencyConstraints.size() == 1
