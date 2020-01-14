@@ -21,9 +21,9 @@ repositories {
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    compileOnly "com.android.tools.build:gradle:$build_tools_version"
+    compileOnly "com.android.tools.build:gradle:$android_gradle_plugin_version"
     testImplementation 'junit:junit:4.12'
-    integTestImplementation "com.android.tools.build:gradle:$build_tools_version"
+    integTestImplementation "com.android.tools.build:gradle:$android_gradle_plugin_version"
     integTestImplementation gradleTestKit()
     integTestImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'

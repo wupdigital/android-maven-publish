@@ -1,13 +1,11 @@
 buildscript {
-
     apply from: "${rootProject.projectDir}/../gradle/shared.gradle"
-
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:${build_tools_version}"
+        classpath "com.android.tools.build:gradle:${android_gradle_plugin_version}"
         // Use the latest version instead of ${project.version}
         classpath "digital.wup:android-maven-publish:${project.version}"
     }
