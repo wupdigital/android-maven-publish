@@ -1,33 +1,34 @@
+# android-maven-publish
+
 [![Build Status](https://travis-ci.org/wupdigital/android-maven-publish.svg?branch=master)](https://travis-ci.org/wupdigital/android-maven-publish)
 [![Coverage Status](https://coveralls.io/repos/github/wupdigital/android-maven-publish/badge.svg?branch=master)](https://coveralls.io/github/wupdigital/android-maven-publish?branch=master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-
-# android-maven-publish
 
 **Deprecated:** This plugin is no longer needed since `maven-publish` is officially supported by AGP.
 
 Use AGP 3.6.0 or newer.
 
 ## Description
+
 Modification of the standard Maven Publish plugin to be compatible with _android-library_ projects (_aar_).
 
 ## Applying the plugin
 
-``` groovy
+```groovy
 plugins {
-    id 'digital.wup.android-maven-publish' version '3.6.2'
+    id 'digital.wup.android-maven-publish' version '3.6.3'
 }
 ```
 
 -or-
 
-``` groovy
+```groovy
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'digital.wup:android-maven-publish:3.6.2'
+        classpath 'digital.wup:android-maven-publish:3.6.3'
     }
 }
 
@@ -43,7 +44,7 @@ The `android` component is used to determine which _aar_ files are published and
 
 Please refer to the standard [Maven Publish plugin documentation](https://docs.gradle.org/current/userguide/publishing_maven.html).
 
-``` groovy
+```groovy
 publishing {
     publications {
         mavenAar(MavenPublication) {
@@ -55,11 +56,10 @@ publishing {
 
 If you want to publish custom variants:
 
-``` groovy
+```groovy
 publishing {
     publications {
         android.libraryVariants.all { variant ->
-
             "maven${variant.name.capitalize()}Aar"(MavenPublication) {
                 from components.findByName("android${variant.name.capitalize()}")
                 groupId 'digital.wup.test-publish'
