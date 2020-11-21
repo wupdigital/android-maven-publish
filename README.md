@@ -4,7 +4,7 @@
 
 # android-maven-publish
 
-**Deprecated:** This plugin is no longer needed since `maven-publish` is officially supported by AGP.
+**Deprecated:** This plugin is no longer needed since [`maven-publish` is officially supported by AGP](https://developer.android.com/studio/build/maven-publish-plugin).
 
 Use AGP 3.6.0 or newer.
 
