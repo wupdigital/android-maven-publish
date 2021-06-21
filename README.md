@@ -53,6 +53,29 @@ publishing {
 }
 ```
 
+If you want to publish sources with your artifact:
+
+``` groovy
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier "sources"
+}
+
+publishing {
+    publications {
+        mavenAar(MavenPublication) {
+            from components.android
+            
+            groupId 'com.company.mylib'
+            artifactId 'mylib'
+            version '1.0.0'
+            artifact(sourceJar)
+        }
+    }
+}
+```
+
+
 If you want to publish custom variants:
 
 ``` groovy
