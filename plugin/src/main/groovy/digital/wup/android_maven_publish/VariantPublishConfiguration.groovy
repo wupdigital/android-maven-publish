@@ -20,6 +20,7 @@ import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Task
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
+import org.gradle.api.internal.provider.AbstractProperty
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Zip
 
@@ -74,8 +75,23 @@ class VariantPublishConfiguration implements PublishConfiguration {
     }
 
     private static AbstractArchiveTask findArchiveTask(Task assemble) {
-        return (AbstractArchiveTask) assemble.dependsOn.find {
-            (it instanceof Zip) && it.name.startsWith('bundle')
+        def abstractArchiveTask
+        assemble.dependsOn.each {
+            if (it instanceof Zip && it.name.startsWith('bundle')) {
+                abstractArchiveTask = it
+            } else if (it instanceof AbstractProperty) {
+                it.producer.visitProducerTasks { task ->
+                    if (task instanceof Zip && task.name.startsWith('bundle')) {
+                        abstractArchiveTask = task
+                    }
+                }
+            }
         }
+
+        if (abstractArchiveTask == null) {
+            throw new IllegalStateException("Archive task not found for ${variant.name}, this should never happen.")
+        }
+
+        return abstractArchiveTask
     }
 }

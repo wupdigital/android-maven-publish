@@ -51,6 +51,8 @@ class DefaultPublishConfiguration implements PublishConfiguration {
             int compare(PublishArtifact a1, PublishArtifact a2) {
                 "${a1.file.path}${a1.type}${a1.classifier}" <=> "${a2.file.path}${a2.type}${a2.classifier}"
             }
-        })
+        }).findAll {artifact ->
+            artifact.extension != null && artifact.classifier != null
+        }
     }
 }

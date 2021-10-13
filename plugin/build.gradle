@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.8.1'
     id 'com.gradle.plugin-publish' version '0.9.10'
-    id 'org.ajoberstar.git-publish' version '0.4.1'
+    id 'org.ajoberstar.git-publish' version '3.0.0'
     id 'idea'
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.8.2'
